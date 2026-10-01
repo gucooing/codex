@@ -163,6 +163,9 @@ pub struct FeatureToggleToml {
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, JsonSchema)]
 #[schemars(deny_unknown_fields)]
 pub struct ConfigToml {
+    /// ccodex service root for OAuth and first-party HTTP/WebSocket APIs.
+    #[serde(rename = "BASE_OAUTH_URL")]
+    pub base_oauth_url: Option<String>,
     /// Optional override of model selection.
     pub model: Option<String>,
     /// Review model override used by the `/review` feature.

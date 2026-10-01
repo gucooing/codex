@@ -624,7 +624,7 @@ fn build_otlp_metric_exporter(
 
             opentelemetry_otlp::MetricExporter::builder()
                 .with_tonic()
-                .with_endpoint(endpoint)
+                .with_endpoint(codex_http_client::service_endpoint::service_url(&endpoint))
                 .with_temporality(temporality)
                 .with_metadata(MetadataMap::from_headers(header_map))
                 .with_tls_config(tls_config)
@@ -646,7 +646,7 @@ fn build_otlp_metric_exporter(
 
             let mut exporter_builder = opentelemetry_otlp::MetricExporter::builder()
                 .with_http()
-                .with_endpoint(endpoint)
+                .with_endpoint(codex_http_client::service_endpoint::service_url(&endpoint))
                 .with_temporality(temporality)
                 .with_protocol(protocol)
                 .with_headers(headers);

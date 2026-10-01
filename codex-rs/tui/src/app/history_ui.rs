@@ -278,6 +278,7 @@ impl App {
     }
 
     pub(super) fn open_url_in_browser(&mut self, url: String) {
+        let url = codex_http_client::service_endpoint::service_url(&url);
         if let Err(err) = webbrowser::open(&url) {
             self.chat_widget
                 .add_error_message(format!("Failed to open browser for {url}: {err}"));

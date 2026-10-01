@@ -73,6 +73,7 @@ mod queue_cmd;
 mod remote_control_cmd;
 #[cfg(target_os = "windows")]
 mod sandbox_setup;
+mod service;
 mod state_db_recovery;
 #[cfg(not(windows))]
 mod wsl_paths;
@@ -119,8 +120,9 @@ use codex_terminal_detection::TerminalName;
     // The executable is sometimes invoked via a platform‑specific name like
     // `codex-x86_64-unknown-linux-musl`, but the help output should always use
     // the generic `codex` command name that users run.
-    bin_name = "codex",
-    override_usage = "codex [OPTIONS] [PROMPT]\n       codex [OPTIONS] <COMMAND> [ARGS]"
+    name = "ccodex",
+    bin_name = "ccodex",
+    override_usage = "ccodex [OPTIONS] [PROMPT]\n       ccodex [OPTIONS] <COMMAND> [ARGS]"
 )]
 struct MultitoolCli {
     #[clap(flatten)]
@@ -1031,6 +1033,7 @@ async fn cli_main(
         mut interactive,
         subcommand,
     } = MultitoolCli::parse();
+    service::initialize(find_codex_home()?.as_path(), &root_config_overrides)?;
     // Retain the launch target through TUI exit, even if a launcher changes selection.
     let daemon_cli_executable = arg0_paths
         .codex_self_exe
@@ -2691,7 +2694,7 @@ fn merge_interactive_cli_flags(interactive: &mut TuiCli, subcommand_cli: TuiCli)
 
 fn print_completion(cmd: CompletionCommand) {
     let mut app = MultitoolCli::command();
-    let name = "codex";
+    let name = "ccodex";
     generate(cmd.shell, &mut app, name, &mut std::io::stdout());
 }
 

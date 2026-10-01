@@ -43,7 +43,11 @@ pub(super) fn is_redirect(status: StatusCode) -> bool {
 
 pub(super) fn redirect_url(response: &reqwest::Response) -> Option<reqwest::Url> {
     let location = response.headers().get(LOCATION)?.to_str().ok()?;
-    response.url().join(location).ok()
+    response
+        .url()
+        .join(location)
+        .ok()
+        .map(crate::service_endpoint::route_service_url)
 }
 
 pub(super) fn redirect_request(

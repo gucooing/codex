@@ -472,7 +472,7 @@ fn build_logger(
 
             let exporter = LogExporter::builder()
                 .with_tonic()
-                .with_endpoint(endpoint)
+                .with_endpoint(codex_http_client::service_endpoint::service_url(&endpoint))
                 .with_metadata(MetadataMap::from_headers(header_map))
                 .with_tls_config(tls_config)
                 .build()?;
@@ -497,7 +497,7 @@ fn build_logger(
 
             let mut exporter_builder = LogExporter::builder()
                 .with_http()
-                .with_endpoint(endpoint)
+                .with_endpoint(codex_http_client::service_endpoint::service_url(&endpoint))
                 .with_protocol(protocol)
                 .with_headers(headers);
 
@@ -554,7 +554,7 @@ fn build_tracer_provider(
 
             SpanExporter::builder()
                 .with_tonic()
-                .with_endpoint(endpoint)
+                .with_endpoint(codex_http_client::service_endpoint::service_url(&endpoint))
                 .with_metadata(MetadataMap::from_headers(header_map))
                 .with_tls_config(tls_config)
                 .build()?
@@ -575,7 +575,7 @@ fn build_tracer_provider(
 
                 let mut exporter_builder = SpanExporter::builder()
                     .with_http()
-                    .with_endpoint(endpoint)
+                    .with_endpoint(codex_http_client::service_endpoint::service_url(&endpoint))
                     .with_protocol(protocol)
                     .with_headers(headers);
 
@@ -607,7 +607,7 @@ fn build_tracer_provider(
 
             let mut exporter_builder = SpanExporter::builder()
                 .with_http()
-                .with_endpoint(endpoint)
+                .with_endpoint(codex_http_client::service_endpoint::service_url(&endpoint))
                 .with_protocol(protocol)
                 .with_headers(headers);
 

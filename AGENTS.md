@@ -1,3 +1,17 @@
+# ccodex distribution
+
+This branch is a minimally customized official Codex CLI. Preserve official tools,
+permissions, sandboxing, login and interaction behavior. Customizations are the
+`BASE_OAUTH_URL` service root, the `ccodex` command, the `.ccodex` default home and
+the `@gucooing/ccodex` release/update channel. Do not isolate credentials per service.
+Keep internal crates, protocol identifiers and helper executable names unchanged.
+See `CCODEX.md` and `scripts/ccodex/upstream.json` for the precise official baseline.
+Sync the exact official stable release here before adapting Codex2Api-rs.
+
+User instruction for this update: no local compilation validation; use cloud CI
+after pushing. Do not run local build/test/clippy/schema generators that compile.
+Formatting and checks that do not compile remain allowed. Report pending CI plainly.
+
 # Rust/codex-rs
 
 In the codex-rs folder where the rust code lives:

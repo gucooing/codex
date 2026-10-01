@@ -14,6 +14,7 @@ mod response;
 mod retry_after;
 mod route_aware_client_pool;
 mod route_aware_redirect;
+pub mod service_endpoint;
 mod tls_backend_fallback;
 mod transport;
 

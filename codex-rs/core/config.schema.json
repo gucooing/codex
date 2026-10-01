@@ -6553,6 +6553,10 @@
   },
   "description": "Base config deserialized from ~/.codex/config.toml.",
   "properties": {
+    "BASE_OAUTH_URL": {
+      "description": "ccodex service root for OAuth and first-party HTTP/WebSocket APIs.",
+      "type": "string"
+    },
     "agents": {
       "allOf": [
         {

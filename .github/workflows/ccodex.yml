@@ -1,0 +1,135 @@
+name: ccodex
+on:
+  push:
+    branches: [ccodex]
+    tags: ["ccodex-v*.*.*"]
+  pull_request:
+    branches: [ccodex]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ccodex-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            target: x86_64-unknown-linux-musl
+          - runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-musl
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
+          - runner: macos-15
+            target: aarch64-apple-darwin
+          - runner: windows-2025
+            target: x86_64-pc-windows-msvc
+          - runner: windows-11-arm
+            target: aarch64-pc-windows-msvc
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    env:
+      CODEX_REPO_ROOT: ${{ github.workspace }}
+      CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - uses: dtolnay/rust-toolchain@1.95.0
+        with:
+          targets: ${{ matrix.target }}
+          components: rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: codex-rs
+          key: ccodex-${{ matrix.target }}
+      - name: Configure Windows compiler
+        if: runner.os == 'Windows'
+        uses: ./.github/actions/setup-msvc-env
+        with:
+          target: ${{ matrix.target }}
+      - name: Install Zig
+        if: runner.os == 'Linux'
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.0
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          bash .github/scripts/install-musl-build-tools.sh
+          echo "AWS_LC_SYS_NO_JITTER_ENTROPY=1" >> "$GITHUB_ENV"
+      - uses: ./.github/actions/setup-rusty-v8
+        with:
+          target: ${{ matrix.target }}
+      - name: Validate release version
+        shell: bash
+        run: python scripts/ccodex/release.py validate
+      - name: Build and package native CLI
+        shell: bash
+        run: python scripts/ccodex/release.py build --target "${{ matrix.target }}"
+      - name: Install test tools
+        if: matrix.target == 'x86_64-pc-windows-msvc'
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just,cargo-nextest
+      - name: Check service routing and configuration
+        if: matrix.target == 'x86_64-pc-windows-msvc'
+        shell: pwsh
+        run: |
+          just test -p codex-http-client -p codex-websocket-client -p codex-utils-home-dir -p codex-login
+          just write-config-schema
+          git diff --exit-code -- codex-rs/core/config.schema.json
+      - name: Check package scripts
+        shell: bash
+        run: |
+          node --check codex-cli/bin/ccodex.js
+          python -m unittest discover -s scripts/ccodex -p 'test_*.py'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ccodex-${{ matrix.target }}
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/ccodex-v')
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      id-token: write
+    environment: npm
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ccodex-*
+          path: dist
+          merge-multiple: true
+      - name: Publish npm platform packages, then CLI
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: python scripts/ccodex/release.py publish
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/ccodex/release.py checksums
+          gh release create "$GITHUB_REF_NAME" dist/*.tar.gz dist/*.zip dist/ccodex-package_SHA256SUMS --title "ccodex ${GITHUB_REF_NAME#ccodex-v}" --generate-notes

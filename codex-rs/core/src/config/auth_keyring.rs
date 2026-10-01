@@ -60,7 +60,14 @@ pub fn bootstrap_auth_config(
         auth_credentials_store_mode: config.cli_auth_credentials_store.unwrap_or_default(),
         keyring_backend_kind: resolve_bootstrap_auth_keyring_backend_kind(bootstrap_config)?,
         forced_login_method: config.forced_login_method,
-        chatgpt_base_url: config.chatgpt_base_url.clone(),
+        chatgpt_base_url: config
+            .chatgpt_base_url
+            .as_deref()
+            .map(codex_http_client::service_endpoint::service_url)
+            .or_else(|| {
+                codex_http_client::service_endpoint::active_service()
+                    .map(|service| format!("{}/backend-api/", service.base_url()))
+            }),
         forced_chatgpt_workspace_id,
         managed_auth_policy: requirements.managed_auth_policy(),
         auth_route_config: resolve_bootstrap_auth_route_config(

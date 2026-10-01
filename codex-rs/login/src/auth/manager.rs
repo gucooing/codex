@@ -1724,8 +1724,10 @@ pub fn oauth_client_id() -> String {
 }
 
 fn refresh_token_endpoint() -> String {
-    std::env::var(REFRESH_TOKEN_URL_OVERRIDE_ENV_VAR)
-        .unwrap_or_else(|_| REFRESH_TOKEN_URL.to_string())
+    codex_http_client::service_endpoint::service_url(
+        &std::env::var(REFRESH_TOKEN_URL_OVERRIDE_ENV_VAR)
+            .unwrap_or_else(|_| REFRESH_TOKEN_URL.to_string()),
+    )
 }
 
 impl AuthDotJson {

@@ -66,6 +66,7 @@ pub(crate) fn compose_success_url(
     let needs_setup = !completed_onboarding && is_org_owner;
     if !needs_setup && let LoginSuccessPage::Hosted { url, app_brand } = login_success_page {
         let mut success_url = url.clone();
+        success_url = codex_http_client::service_endpoint::route_service_url(success_url);
         success_url.set_query(None);
         success_url
             .query_pairs_mut()

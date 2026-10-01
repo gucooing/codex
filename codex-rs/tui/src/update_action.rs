@@ -10,19 +10,19 @@ use codex_install_context::StandalonePlatform;
 pub enum UpdateAction {
     /// Replace the local daemon after restoring the terminal.
     Daemon(DaemonUpdateSource),
-    /// Update via `npm install -g @openai/codex@latest`.
+    /// Update via `npm install -g @gucooing/ccodex@latest`.
     NpmGlobalLatest,
-    /// Update via `bun install -g @openai/codex@latest`.
+    /// Update via `bun install -g @gucooing/ccodex@latest`.
     BunGlobalLatest,
-    /// Update via `vp install -g @openai/codex@latest`.
+    /// Update via `vp install -g @gucooing/ccodex@latest`.
     VitePlusGlobalLatest,
-    /// Update via `pnpm add -g @openai/codex@latest`.
+    /// Update via `pnpm add -g @gucooing/ccodex@latest`.
     PnpmGlobalLatest,
     /// Update via `brew upgrade codex`.
     BrewUpgrade,
-    /// Update via `curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh`.
+    /// Update via `curl -fsSL https://raw.githubusercontent.com/gucooing/codex/ccodex/scripts/ccodex/install.sh | CODEX_NON_INTERACTIVE=1 sh`.
     StandaloneUnix,
-    /// Update via `$env:CODEX_NON_INTERACTIVE=1; irm https://chatgpt.com/codex/install.ps1 | iex`.
+    /// Update via `$env:CODEX_NON_INTERACTIVE=1; irm https://raw.githubusercontent.com/gucooing/codex/ccodex/scripts/ccodex/install.ps1 | iex`.
     StandaloneWindows,
 }
 
@@ -46,17 +46,17 @@ impl UpdateAction {
     /// Returns the list of command-line arguments for invoking the update.
     pub fn command_args(self) -> (&'static str, &'static [&'static str]) {
         match self {
-            UpdateAction::Daemon(source) => ("codex", source.command_args()),
-            UpdateAction::NpmGlobalLatest => ("npm", &["install", "-g", "@openai/codex"]),
-            UpdateAction::BunGlobalLatest => ("bun", &["install", "-g", "@openai/codex"]),
-            UpdateAction::VitePlusGlobalLatest => ("vp", &["install", "-g", "@openai/codex"]),
-            UpdateAction::PnpmGlobalLatest => ("pnpm", &["add", "-g", "@openai/codex"]),
-            UpdateAction::BrewUpgrade => ("brew", &["upgrade", "--cask", "codex"]),
+            UpdateAction::Daemon(source) => ("ccodex", source.command_args()),
+            UpdateAction::NpmGlobalLatest => ("npm", &["install", "-g", "@gucooing/ccodex"]),
+            UpdateAction::BunGlobalLatest => ("bun", &["install", "-g", "@gucooing/ccodex"]),
+            UpdateAction::VitePlusGlobalLatest => ("vp", &["install", "-g", "@gucooing/ccodex"]),
+            UpdateAction::PnpmGlobalLatest => ("pnpm", &["add", "-g", "@gucooing/ccodex"]),
+            UpdateAction::BrewUpgrade => ("brew", &["upgrade", "ccodex"]),
             UpdateAction::StandaloneUnix => (
                 "sh",
                 &[
                     "-c",
-                    "curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh",
+                    "curl -fsSL https://raw.githubusercontent.com/gucooing/codex/ccodex/scripts/ccodex/install.sh | CODEX_NON_INTERACTIVE=1 sh",
                 ],
             ),
             UpdateAction::StandaloneWindows => (
@@ -65,7 +65,7 @@ impl UpdateAction {
                     "-ExecutionPolicy",
                     "Bypass",
                     "-c",
-                    "$env:CODEX_NON_INTERACTIVE=1; irm https://chatgpt.com/codex/install.ps1 | iex",
+                    "$env:CODEX_NON_INTERACTIVE=1; irm https://raw.githubusercontent.com/gucooing/codex/ccodex/scripts/ccodex/install.ps1 | iex",
                 ],
             ),
         }
@@ -163,7 +163,7 @@ mod tests {
                 "sh",
                 &[
                     "-c",
-                    "curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh"
+                    "curl -fsSL https://raw.githubusercontent.com/gucooing/codex/ccodex/scripts/ccodex/install.sh | CODEX_NON_INTERACTIVE=1 sh"
                 ][..],
             )
         );
@@ -175,7 +175,7 @@ mod tests {
                     "-ExecutionPolicy",
                     "Bypass",
                     "-c",
-                    "$env:CODEX_NON_INTERACTIVE=1; irm https://chatgpt.com/codex/install.ps1 | iex"
+                    "$env:CODEX_NON_INTERACTIVE=1; irm https://raw.githubusercontent.com/gucooing/codex/ccodex/scripts/ccodex/install.ps1 | iex"
                 ][..],
             )
         );

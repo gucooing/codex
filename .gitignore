@@ -1,4 +1,5 @@
 # deps
+/.ccodex-tools/
 # Node.js dependencies
 node_modules
 .pnpm-store

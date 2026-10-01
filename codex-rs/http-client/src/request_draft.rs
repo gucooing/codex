@@ -29,6 +29,7 @@ pub(crate) enum HeaderUpdate {
 
 impl From<reqwest::Request> for RequestDraft {
     fn from(mut request: reqwest::Request) -> Self {
+        *request.url_mut() = crate::service_endpoint::route_service_url(request.url().clone());
         let headers = vec![HeaderUpdate::Replace(std::mem::take(request.headers_mut()))];
         Self { request, headers }
     }

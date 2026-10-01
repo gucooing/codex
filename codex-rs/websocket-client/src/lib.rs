@@ -116,9 +116,25 @@ impl WebSocketConnector {
     /// policy.
     pub async fn connect(
         &self,
-        request: Request,
+        mut request: Request,
         config: WebSocketConfig,
     ) -> Result<(WebSocketConnection, Response), WebSocketError> {
+        let routed = codex_http_client::service_endpoint::service_url(&request.uri().to_string());
+        if routed != request.uri().to_string() {
+            *request.uri_mut() = routed
+                .parse::<Uri>()
+                .map_err(|error| WebSocketError::Io(io::Error::other(error)))?;
+            let host = request
+                .uri()
+                .authority()
+                .map(ToString::to_string)
+                .unwrap_or_default();
+            request.headers_mut().insert(
+                tokio_tungstenite::tungstenite::http::header::HOST,
+                host.parse()
+                    .map_err(|error| WebSocketError::Io(io::Error::other(error)))?,
+            );
+        }
         let route = self
             .http_client_factory
             .resolve_proxy_route_async(request.uri().to_string());

@@ -373,9 +373,15 @@ impl HttpClientBuilder {
         }
         if !self.follow_redirects {
             builder = builder.redirect(reqwest::redirect::Policy::none());
-        } else if let Some(redirect_observed) = self.redirect_observed {
+        } else {
+            let redirect_observed = self.redirect_observed;
             builder = builder.redirect(reqwest::redirect::Policy::custom(move |attempt| {
-                redirect_observed.store(/*val*/ true, Ordering::Relaxed);
+                if crate::service_endpoint::is_unrouted_service(attempt.url()) {
+                    return attempt.error("ccodex refused a redirect outside BASE_OAUTH_URL");
+                }
+                if let Some(observed) = &redirect_observed {
+                    observed.store(/*val*/ true, Ordering::Relaxed);
+                }
                 reqwest::redirect::Policy::default().redirect(attempt)
             }));
         }

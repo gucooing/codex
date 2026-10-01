@@ -112,7 +112,9 @@ impl ServerOptions {
         Self {
             codex_home,
             client_id,
-            issuer: DEFAULT_ISSUER.to_string(),
+            issuer: codex_http_client::service_endpoint::service_url(DEFAULT_ISSUER)
+                .trim_end_matches('/')
+                .to_owned(),
             port: DEFAULT_PORT,
             open_browser: true,
             force_state: None,
@@ -174,7 +176,10 @@ impl ShutdownHandle {
 }
 
 /// Starts a local callback server and returns the browser auth URL.
-pub fn run_login_server(opts: ServerOptions) -> io::Result<LoginServer> {
+pub fn run_login_server(mut opts: ServerOptions) -> io::Result<LoginServer> {
+    opts.issuer = codex_http_client::service_endpoint::service_url(&opts.issuer)
+        .trim_end_matches('/')
+        .to_owned();
     let pkce = generate_pkce();
     let state = opts.force_state.clone().unwrap_or_else(generate_state);
 

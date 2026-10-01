@@ -60,7 +60,7 @@ pub(super) async fn revoke_auth_tokens(
         return Ok(());
     };
 
-    let endpoint = revoke_token_endpoint();
+    let endpoint = codex_http_client::service_endpoint::service_url(&revoke_token_endpoint());
     let client = create_default_auth_client(&endpoint, auth_route_config)?;
     revoke_oauth_token(&client, endpoint.as_str(), token, kind, REVOKE_HTTP_TIMEOUT).await
 }
@@ -147,7 +147,12 @@ fn revoke_token_endpoint() -> String {
 
 fn derive_revoke_token_endpoint(refresh_endpoint: &str) -> Option<String> {
     let mut url = url::Url::parse(refresh_endpoint).ok()?;
-    url.set_path("/oauth/revoke");
+    let prefix = url
+        .path()
+        .strip_suffix("/oauth/token")
+        .unwrap_or("")
+        .to_owned();
+    url.set_path(&format!("{prefix}/oauth/revoke"));
     url.set_query(None);
     Some(url.to_string())
 }
