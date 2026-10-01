@@ -2,12 +2,27 @@
 import json
 from pathlib import Path
 import tempfile
+import tarfile
 import unittest
 
 import release
 
 
 class PackageTests(unittest.TestCase):
+    def test_npm_pack_runs_with_spaces_and_shell_characters_in_paths(self):
+        builder = release.npm_builder()
+        with tempfile.TemporaryDirectory(prefix="ccodex npm ") as temporary:
+            root = Path(temporary)
+            stage = root / "stage & literal"
+            stage.mkdir()
+            builder.stage_sources(stage, "0.159.3", "codex")
+            output = root / "output & literal" / "ccodex.tgz"
+            builder.run_npm_pack(stage, output)
+            with tarfile.open(output) as archive:
+                manifest = json.load(archive.extractfile("package/package.json"))
+                self.assertEqual(manifest["bin"], {"ccodex": "bin/ccodex.js"})
+                self.assertIn("package/bin/ccodex.js", archive.getnames())
+
     def test_launcher_and_all_platform_aliases_resolve_to_fork(self):
         builder = release.npm_builder()
         with tempfile.TemporaryDirectory() as temporary:

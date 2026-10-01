@@ -44,6 +44,11 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 24
+      - name: Check package scripts and npm entrypoint
+        shell: bash
+        run: |
+          node --check codex-cli/bin/ccodex.js
+          python -m unittest discover -s scripts/ccodex -p 'test_*.py'
       - uses: dtolnay/rust-toolchain@1.95.0
         with:
           targets: ${{ matrix.target }}
@@ -91,11 +96,6 @@ jobs:
           just test -p codex-http-client -p codex-websocket-client -p codex-utils-home-dir -p codex-login
           just write-config-schema
           git diff --exit-code -- codex-rs/core/config.schema.json
-      - name: Check package scripts
-        shell: bash
-        run: |
-          node --check codex-cli/bin/ccodex.js
-          python -m unittest discover -s scripts/ccodex -p 'test_*.py'
       - uses: actions/upload-artifact@v4
         with:
           name: ccodex-${{ matrix.target }}

@@ -329,7 +329,24 @@ def compute_platform_package_version(version: str, platform_tag: str) -> str:
     return f"{version}-{platform_tag}"
 
 
+def npm_command() -> list[str]:
+    executable = shutil.which("npm.cmd" if os.name == "nt" else "npm")
+    if executable is None:
+        raise RuntimeError("npm was not found on PATH; install Node.js before packaging.")
+    if os.name != "nt":
+        return [executable]
+    # CreateProcess does not resolve `npm` to npm.cmd. Invoke its JS entrypoint
+    # directly so paths with spaces or shell metacharacters remain literal args.
+    node = shutil.which("node")
+    entrypoint = Path(executable).parent / "node_modules" / "npm" / "bin" / "npm-cli.js"
+    if node is None or not entrypoint.is_file():
+        raise RuntimeError("Cannot locate node and npm-cli.js beside the Windows npm launcher.")
+    return [node, str(entrypoint)]
+
+
 def run_command(cmd: list[str], cwd: Path | None = None) -> None:
+    if cmd and cmd[0] == "npm":
+        cmd = [*npm_command(), *cmd[1:]]
     print("+", " ".join(cmd), flush=True)
     subprocess.run(cmd, cwd=cwd, check=True)
 
@@ -429,7 +446,7 @@ def run_npm_pack(staging_dir: Path, output_path: Path) -> Path:
         env["NPM_CONFIG_CACHE"] = str(npm_cache_dir)
         env["NPM_CONFIG_LOGS_DIR"] = str(npm_logs_dir)
         stdout = subprocess.check_output(
-            ["npm", "pack", "--json", "--pack-destination", str(pack_dir)],
+            [*npm_command(), "pack", "--json", "--pack-destination", str(pack_dir)],
             cwd=staging_dir,
             env=env,
             text=True,

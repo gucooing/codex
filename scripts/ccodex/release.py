@@ -93,11 +93,11 @@ def publish():
     module = npm_builder()
     for platform in module.CODEX_PLATFORM_PACKAGES.values():
         archive = DIST / f"ccodex-{platform['target_triple']}.tgz"
-        subprocess.run(["npm", "publish", str(archive), "--access", "public", "--tag", platform["npm_tag"]], check=True)
+        subprocess.run([*module.npm_command(), "publish", str(archive), "--access", "public", "--tag", platform["npm_tag"]], check=True)
     with tempfile.TemporaryDirectory(prefix="ccodex-npm-") as temporary:
         stage = Path(temporary)
         module.stage_sources(stage, release_version, "codex")
-        subprocess.run(["npm", "publish", str(stage), "--access", "public", "--tag", "latest"], check=True)
+        subprocess.run([*module.npm_command(), "publish", str(stage), "--access", "public", "--tag", "latest"], check=True)
 
 
 def checksums():
