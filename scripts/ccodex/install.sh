@@ -15,7 +15,7 @@ release_source="github"
 
 BIN_DIR="${CODEX_INSTALL_DIR:-$HOME/.local/bin}"
 BIN_PATH="$BIN_DIR/ccodex"
-CODE_MODE_HOST_BIN_PATH="$BIN_DIR/codex-code-mode-host"
+CODE_MODE_HOST_BIN_PATH="$BIN_DIR/ccodex-code-mode-host"
 CODEX_HOME_DIR="${CCODEX_HOME:-${CODEX_HOME:-$HOME/.ccodex}}"
 STANDALONE_ROOT="$CODEX_HOME_DIR/packages/standalone"
 if [ "$DAEMON_ONLY" = "1" ]; then
