@@ -89,13 +89,18 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: just,cargo-nextest
-      - name: Check service routing and configuration
+      - name: Test service routing
         if: matrix.target == 'x86_64-pc-windows-msvc'
         shell: pwsh
-        run: |
-          just test -p codex-http-client -p codex-websocket-client -p codex-utils-home-dir -p codex-login
-          just write-config-schema
-          git diff --exit-code -- codex-rs/core/config.schema.json
+        run: just test -p codex-http-client -p codex-websocket-client -p codex-utils-home-dir -p codex-login
+      - name: Generate configuration schema
+        if: matrix.target == 'x86_64-pc-windows-msvc'
+        shell: pwsh
+        run: just write-config-schema
+      - name: Check configuration schema
+        if: matrix.target == 'x86_64-pc-windows-msvc'
+        shell: pwsh
+        run: git diff --exit-code -- codex-rs/core/config.schema.json
       - uses: actions/upload-artifact@v4
         with:
           name: ccodex-${{ matrix.target }}
