@@ -78,6 +78,17 @@ jobs:
       - uses: ./.github/actions/setup-rusty-v8
         with:
           target: ${{ matrix.target }}
+      - name: Refresh V8 native artifacts after cache restore
+        shell: bash
+        working-directory: codex-rs
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          # rust-cache removes gn_out but keeps V8's build-script fingerprints.
+          # Re-run build.rs to unpack the verified native archive on cache hits.
+          cargo clean --package v8 --release --target "$TARGET"
+          # The Windows routing tests also build V8 for the host debug profile.
+          cargo clean --package v8
       - name: Validate release version
         shell: bash
         run: python scripts/ccodex/release.py validate
