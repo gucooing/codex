@@ -104,6 +104,14 @@ jobs:
         if: matrix.target == 'x86_64-pc-windows-msvc'
         shell: pwsh
         run: just test -p codex-http-client -p codex-websocket-client -p codex-utils-home-dir -p codex-login
+      - name: Test release protocol and model catalog compatibility
+        if: matrix.target == 'x86_64-pc-windows-msvc'
+        shell: pwsh
+        run: just test -p codex-api -p codex-models-manager -p codex-model-provider -p codex-prompts -p codex-guardian-context
+      - name: Test Responses recovery and Guardian context
+        if: matrix.target == 'x86_64-pc-windows-msvc'
+        shell: pwsh
+        run: just test -p codex-core -E 'test(content_filter) | test(guardian_root_handoff) | test(guardian_conversation_history)'
       - name: Generate configuration schema
         if: matrix.target == 'x86_64-pc-windows-msvc'
         shell: pwsh
