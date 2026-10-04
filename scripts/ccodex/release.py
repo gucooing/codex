@@ -42,7 +42,13 @@ def npm_builder():
 def build(target):
     release_version = validate()
     DIST.mkdir(exist_ok=True)
-    env = {**os.environ, "CODEX_REPO_ROOT": str(ROOT)}
+    # Official release CI strips binaries after archiving symbols. This npm
+    # build has no symbols archive, so strip during Cargo's release build.
+    env = {
+        **os.environ,
+        "CODEX_REPO_ROOT": str(ROOT),
+        "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+    }
     # Match upstream: bwrap's finalized bytes are hashed before compiling Codex.
     if "linux" in target:
         subprocess.run(["cargo", "build", "--locked", "--release", "--target", target, "--bin", "bwrap"], cwd=ROOT / "codex-rs", env=env, check=True)
