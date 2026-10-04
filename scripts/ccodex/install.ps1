@@ -76,8 +76,8 @@ function Assert-ValidReleaseVersion {
         [string]$Version
     )
 
-    if ($Version -cne "latest" -and $Version -cnotmatch "^[0-9]+\.[0-9]+\.[0-9]+(?:-alpha(?:\.[0-9]+){0,2}|-beta(?:\.[0-9]+)?)?$") {
-        throw "Invalid Codex release version: $Version. Expected latest or x.y.z[-alpha[.N[.M]]|-beta[.N]]."
+    if ($Version -cne "latest" -and $Version -cnotmatch "^[0-9]+\.[0-9]+\.[0-9]+(?:-alpha(?:\.[0-9]+){0,2}|-beta(?:\.[0-9]+)?)?(?:\+[1-9][0-9]*)?$") {
+        throw "Invalid Codex release version: $Version. Expected latest or x.y.z[-alpha[.N[.M]]|-beta[.N]][+N]."
     }
 }
 
@@ -784,8 +784,9 @@ function Test-ReleaseIsComplete {
         }
     }
 
+    $binaryVersion = ($ExpectedVersion -split '\+', 2)[0]
     return (Split-Path -Leaf $ReleaseDir) -eq "$ExpectedVersion-$ExpectedTarget" -and
-        (Get-VersionFromBinary -CodexPath $ccodexPath) -ceq $ExpectedVersion
+        (Get-VersionFromBinary -CodexPath $ccodexPath) -ceq $binaryVersion
 }
 
 function Get-ExistingCodexCommand {

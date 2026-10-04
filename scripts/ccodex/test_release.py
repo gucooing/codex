@@ -1,14 +1,20 @@
 """Packaging checks that do not compile or publish anything."""
 import json
+import os
 from pathlib import Path
 import tempfile
 import tarfile
 import unittest
+from unittest.mock import patch
 
 import release
 
 
 class PackageTests(unittest.TestCase):
+    def test_packaging_revision_tag_keeps_the_official_version(self):
+        with patch.dict(os.environ, {"GITHUB_REF": f"refs/tags/ccodex-v{release.version()}+1"}):
+            self.assertEqual(release.validate(), release.version())
+
     def test_npm_pack_runs_with_spaces_and_shell_characters_in_paths(self):
         builder = release.npm_builder()
         with tempfile.TemporaryDirectory(prefix="ccodex npm ") as temporary:

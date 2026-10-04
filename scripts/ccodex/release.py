@@ -27,8 +27,9 @@ def validate():
     if not re.fullmatch(r"\d+\.\d+\.\d+(?:-[\w.-]+)?", release_version):
         raise ValueError("Invalid Cargo release version")
     ref = os.environ.get("GITHUB_REF", "")
-    if ref.startswith("refs/tags/") and ref != f"refs/tags/ccodex-v{release_version}":
-        raise ValueError("ccodex tag must match the Cargo workspace version")
+    tag_pattern = rf"refs/tags/ccodex-v{re.escape(release_version)}(?:\+[1-9]\d*)?"
+    if ref.startswith("refs/tags/") and not re.fullmatch(tag_pattern, ref):
+        raise ValueError("ccodex tag must match the Cargo version, with an optional +N build revision")
     return release_version
 
 

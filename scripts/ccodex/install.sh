@@ -74,8 +74,8 @@ validate_version() {
     return
   fi
 
-  if ! printf '%s\n' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-alpha(\.[0-9]+){0,2}|-beta(\.[0-9]+)?)?$'; then
-    echo "Invalid Codex release version: $version. Expected latest or x.y.z[-alpha[.N[.M]]|-beta[.N]]." >&2
+  if ! printf '%s\n' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-alpha(\.[0-9]+){0,2}|-beta(\.[0-9]+)?)?(\+[1-9][0-9]*)?$'; then
+    echo "Invalid Codex release version: $version. Expected latest or x.y.z[-alpha[.N[.M]]|-beta[.N]][+N]." >&2
     return 1
   fi
 }
@@ -1031,7 +1031,7 @@ release_dir_is_complete() {
   esac
 
   installed_version="$(version_from_binary "$release_dir/bin/ccodex" || version_from_binary "$release_dir/ccodex" || true)"
-  [ "$installed_version" = "$expected_version" ]
+  [ "$installed_version" = "${expected_version%%+*}" ]
 }
 
 update_current_link() {

@@ -19,11 +19,11 @@
 确认分支 CI 成功后，在工作区版本号对应的提交上创建并推送 tag：
 
 ```sh
-git tag ccodex-v0.160.0
-git push origin ccodex-v0.160.0
+git tag ccodex-v0.160.0+1
+git push origin ccodex-v0.160.0+1
 ```
 
-tag 必须与 `codex-rs/Cargo.toml` 的 workspace version 一致。流程先成功构建所有平台，然后发布平台包，最后发布 npm `latest` 和 GitHub Release。安装器、CLI 更新检查和 npm 更新命令使用本仓库/包，不使用官方 codex 更新源。未配置发布权限时构建产物仍可在 Actions 下载，不能声称已经发布到 npm。
+tag 的基础版本必须与 `codex-rs/Cargo.toml` 的 workspace version 一致；`+N` 只递增打包修订，不改变 CLI、npm 包或官方协议版本。流程先成功构建所有平台，然后发布平台包，最后发布 npm `latest` 和 GitHub Release。安装器、CLI 更新检查和 npm 更新命令使用本仓库/包，不使用官方 codex 更新源。未配置发布权限时构建产物仍可在 Actions 下载，不能声称已经发布到 npm。
 
 没有配置 Homebrew tap、WinGet catalog 或 Apple 签名凭据；不要把这些渠道写成已发布。原生安装与 npm 均提供平台对应的构建。
 
