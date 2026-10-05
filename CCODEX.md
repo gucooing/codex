@@ -12,7 +12,7 @@
 
 ## 云端检查与发布
 
-用户要求不在本地做编译验证。`.github/workflows/ccodex.yml` 在推送 `ccodex` 时执行六个平台的构建及打包，并上传 Actions artifacts。Windows x64 任务运行相关 Rust 测试及配置 schema 生成校验。普通分支推送不会发布 npm 或 GitHub Release。
+用户要求不在本地做编译验证。`.github/workflows/ccodex.yml` 在推送 `ccodex` 时执行六个平台的构建及打包，并上传 Actions artifacts。Windows x64 任务运行相关 Rust 测试、完整发布包的 daemon 安装回归测试及配置 schema 生成校验。普通分支推送不会发布 npm 或 GitHub Release。
 
 首次发布前，在 GitHub 配置 `npm` environment，并配置 `NPM_TOKEN`（有 `@gucooing/ccodex` 发布权限），或者为该包配置 npm trusted publishing。这个包名及 scope 必须由维护者实际持有。
 

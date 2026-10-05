@@ -27,7 +27,7 @@ fn package(root: &Path, version: &str) -> PathBuf {
     for dir in ["bin", "codex-path", "codex-resources/nested"] {
         std::fs::create_dir_all(root.join(dir)).expect("package directory");
     }
-    let bin = root.join("bin/codex");
+    let bin = root.join("bin/ccodex");
     std::fs::write(&bin, format!("#!/bin/sh\necho 'codex {version}'\n")).expect("codex executable");
     for file in [
         "bin/codex-code-mode-host",
@@ -53,7 +53,7 @@ fn package(root: &Path, version: &str) -> PathBuf {
     std::fs::write(
         root.join("codex-package.json"),
         serde_json::json!({
-            "version": version, "target": target, "entrypoint": "bin/codex"
+            "version": version, "target": target, "entrypoint": "bin/ccodex"
         })
         .to_string(),
     )
@@ -298,7 +298,7 @@ async fn explicit_selection_requires_unchanged_cli_and_pins_all_versions() {
                 previous.to_string_lossy().as_bytes(),
             )
             .unwrap();
-            let before = std::fs::read(previous.join("bin/codex")).unwrap();
+            let before = std::fs::read(previous.join("bin/ccodex")).unwrap();
             assert!(
                 !prepare_from_package(
                     &daemon,
@@ -343,10 +343,10 @@ async fn explicit_selection_requires_unchanged_cli_and_pins_all_versions() {
             }
             assert_ne!(selected, previous);
             assert_eq!(
-                std::fs::read(selected.join("bin/codex")).unwrap(),
+                std::fs::read(selected.join("bin/ccodex")).unwrap(),
                 std::fs::read(&bin).unwrap()
             );
-            assert_eq!(std::fs::read(previous.join("bin/codex")).unwrap(), before);
+            assert_eq!(std::fs::read(previous.join("bin/ccodex")).unwrap(), before);
             assert!(!root.join("auto-update-version").exists());
             assert!(daemon.running_backend(&settings).await.unwrap().is_none());
             previous = selected;

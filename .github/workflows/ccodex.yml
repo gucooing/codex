@@ -104,6 +104,16 @@ jobs:
         if: matrix.target == 'x86_64-pc-windows-msvc'
         shell: pwsh
         run: just test -p codex-http-client -p codex-websocket-client -p codex-utils-home-dir -p codex-login
+      - name: Test daemon installation from the native package
+        if: matrix.target == 'x86_64-pc-windows-msvc'
+        shell: pwsh
+        run: |
+          $package = Join-Path $env:RUNNER_TEMP "ccodex-daemon-test-package"
+          New-Item -ItemType Directory -Path $package | Out-Null
+          tar -xzf "dist/ccodex-package-${{ matrix.target }}.tar.gz" -C $package
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $env:CCODEX_TEST_PACKAGE_DIR = $package
+          just test -p codex-app-server-daemon --run-ignored all
       - name: Test release protocol and model catalog compatibility
         if: matrix.target == 'x86_64-pc-windows-msvc'
         shell: pwsh

@@ -156,9 +156,9 @@ async fn prepare_from_package(
     let target = platform_target()?;
     let metadata: serde_json::Value = serde_json::from_slice(&manifest_bytes)?;
     let entrypoint = if cfg!(windows) {
-        "bin/codex.exe"
+        "bin/ccodex.exe"
     } else {
-        "bin/codex"
+        "bin/ccodex"
     };
     anyhow::ensure!(
         metadata["target"] == target && metadata["entrypoint"] == entrypoint,
@@ -259,8 +259,8 @@ async fn prepare_from_package(
         );
     } else {
         #[cfg(unix)]
-        if !stage.path().join("codex").exists() {
-            std::os::unix::fs::symlink("bin/codex", stage.path().join("codex"))?;
+        if !stage.path().join("ccodex").exists() {
+            std::os::unix::fs::symlink("bin/ccodex", stage.path().join("ccodex"))?;
         }
         std::fs::rename(stage.path(), &release)?;
     }
@@ -368,8 +368,8 @@ fn package_tree(root: &Path, destination: Option<&Path>) -> Result<String> {
         let relative = path.strip_prefix(root)?;
         // The Unix installer adds this alias outside the package layout.
         if cfg!(unix)
-            && relative == Path::new("codex")
-            && std::fs::read_link(&path).ok().as_deref() == Some(Path::new("bin/codex"))
+            && relative == Path::new("ccodex")
+            && std::fs::read_link(&path).ok().as_deref() == Some(Path::new("bin/ccodex"))
         {
             continue;
         }
@@ -428,9 +428,9 @@ fn validate_package(root: &Path) -> Result<()> {
     let mut names = vec![
         "codex-package.json",
         if cfg!(windows) {
-            "bin/codex.exe"
+            "bin/ccodex.exe"
         } else {
-            "bin/codex"
+            "bin/ccodex"
         },
         if cfg!(windows) {
             "bin/codex-code-mode-host.exe"
@@ -491,3 +491,7 @@ mod windows;
 #[cfg(test)]
 #[path = "prepare_install_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "prepare_install_package_tests.rs"]
+mod package_tests;
