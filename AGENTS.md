@@ -8,9 +8,11 @@ Keep internal crates, protocol identifiers and helper executable names unchanged
 See `CCODEX.md` and `scripts/ccodex/upstream.json` for the precise official baseline.
 Sync the exact official stable release here before adapting Codex2Api-rs.
 
-User instruction for this update: no local compilation validation; use cloud CI
-after pushing. Do not run local build/test/clippy/schema generators that compile.
-Formatting and checks that do not compile remain allowed. Report pending CI plainly.
+Do not compile ccodex locally. This includes build, test, clippy and schema
+generation commands that compile Rust. Source review, formatting and checks that
+do not compile remain allowed. Record skipped or failed checks honestly. Do not
+push or create branches solely to obtain cloud CI validation; publishing and
+deployment require separate user authorization.
 
 # Rust/codex-rs
 

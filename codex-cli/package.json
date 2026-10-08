@@ -1,6 +1,6 @@
 {
   "name": "@gucooing/ccodex",
-  "version": "0.160.0",
+  "version": "0.161.0",
   "description": "Codex CLI with configurable third-party service endpoints.",
   "license": "Apache-2.0",
   "bin": {
