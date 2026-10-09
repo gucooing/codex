@@ -1,6 +1,6 @@
 # 维护 ccodex
 
-本分支以官方 `rust-v0.161.0` / `979011409de0a60b52f179721948e65531d26144` 为基线。原有 `main` 开发分支保留；持续维护的定制分支为 `ccodex`。
+本分支以官方 `rust-v0.162.0` / `c1382380de69521303b416720a52f42d51af6248` 为基线。原有 `main` 开发分支保留；持续维护的定制分支为 `ccodex`。
 
 ## 定制边界
 
@@ -19,8 +19,8 @@
 确认分支 CI 成功后，在工作区版本号对应的提交上创建并推送 tag：
 
 ```sh
-git tag ccodex-v0.161.0+1
-git push origin ccodex-v0.161.0+1
+git tag ccodex-v0.162.0+1
+git push origin ccodex-v0.162.0+1
 ```
 
 tag 的基础版本必须与 `codex-rs/Cargo.toml` 的 workspace version 一致；`+N` 只递增打包修订，不改变 CLI、npm 包或官方协议版本。流程先成功构建所有平台，然后发布平台包，最后发布 npm `latest` 和 GitHub Release。安装器、CLI 更新检查和 npm 更新命令使用本仓库/包，不使用官方 codex 更新源。未配置发布权限时构建产物仍可在 Actions 下载，不能声称已经发布到 npm。
@@ -31,7 +31,7 @@ tag 的基础版本必须与 `codex-rs/Cargo.toml` 的 workspace version 一致�
 
 1. 从 `openai/codex` 获取最新稳定版 tag，解析完整 commit，先审阅与当前基线的源码差异。
 2. 在 `ccodex` 合并目标稳定版，保留本分支的最小定制；不要直接以 main 开发提交替代发布版。更新 `scripts/ccodex/upstream.json` 的 tag、commit 和官方资产摘要。
-3. 检查 endpoint 调用链、配置、登录刷新/撤销、WS 及打包布局变化；本地只做不编译的检查，Rust 编译、测试和 schema 生成留待获准的构建环境执行。当前 release tag 的上游锁文件仍含 0.0.0，本分支的 Cargo.lock 仅同步继承 workspace version 的本地 crate 为 0.161.0；外部依赖采用该 release，包括固定 git rev 的 rmcp 3.3.0。
+3. 检查 endpoint 调用链、配置、登录刷新/撤销、WS 及打包布局变化；本地只做不编译的检查，Rust 编译、测试和 schema 生成留待获准的构建环境执行。当前 release tag 的上游锁文件仍含 0.0.0，本分支的 Cargo.lock 仅同步继承 workspace version 的本地 crate 为 0.162.0；外部依赖采用该 release，包括固定 git rev 的 rmcp 3.3.0。
 4. `ccodex` 验证后，再按 Codex2API 的 `docs/CODEX_UPDATES.md` 更新代理。代理的供应端协议常量仍来自官方 release，不能写成第三方服务地址。
 5. 本地静态打包检查可运行 `python -m unittest discover -s scripts/ccodex -p 'test_*.py'`，它不会编译或发布。
 
