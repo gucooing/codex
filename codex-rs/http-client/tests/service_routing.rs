@@ -7,7 +7,7 @@ use tokio::io::AsyncWriteExt;
 async fn first_party_token_requests_reach_configured_service_with_unchanged_body() {
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let address = listener.local_addr().unwrap();
-    initialize_service(&format!("http://{address}/api/oauth/chatgpt")).unwrap();
+    initialize_service(&format!("http://{address}/v1/chatgpt")).unwrap();
     let server = tokio::spawn(async move {
         let (mut socket, _) = listener.accept().await.unwrap();
         let mut request = Vec::new();
@@ -21,7 +21,7 @@ async fn first_party_token_requests_reach_configured_service_with_unchanged_body
             }
         }
         let request = String::from_utf8(request).unwrap();
-        assert!(request.starts_with("POST /api/oauth/chatgpt/oauth/token HTTP/1.1\r\n"));
+        assert!(request.starts_with("POST /v1/chatgpt/oauth/token HTTP/1.1\r\n"));
         assert!(request.ends_with("grant_type=refresh_token&refresh_token=fixture-refresh"));
         socket
             .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{}")

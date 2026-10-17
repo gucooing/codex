@@ -1,6 +1,6 @@
 # ccodex
 
-支持第三方服务端的 Codex CLI，基于官方 **0.162.1**（`092d3acd6bec3e3a14bdc7e7a2810ab628ab759d`）。保留官方工具、权限、沙箱、登录及交互实现；定制项是服务地址、安装隔离、命令名和发布更新渠道。本项目由 gucooing 维护，不是 OpenAI 官方发行包。
+支持第三方服务端的 Codex CLI，基于官方 **0.163.0**（`83086188ae0614bd882818ff1aa23f3194962012`）。保留官方工具、权限、沙箱、登录及交互实现；定制项是服务地址、安装隔离、命令名和发布更新渠道。本项目由 gucooing 维护，不是 OpenAI 官方发行包。
 
 ## 安装与更新
 
@@ -30,12 +30,12 @@ irm https://raw.githubusercontent.com/gucooing/codex/ccodex/scripts/ccodex/insta
 配置文件默认为 `~/.ccodex/config.toml`（Windows：`%USERPROFILE%\.ccodex\config.toml`）。可通过 `CCODEX_HOME` 指定目录；显式的兼容 `CODEX_HOME` 覆盖仍受支持，勿将其指向官方数据目录。
 
 ```toml
-BASE_OAUTH_URL = "https://oauth-ai.alsl.xyz/api/oauth/chatgpt"
+BASE_OAUTH_URL = "https://oauth-ai.alsl.xyz/v1/chatgpt"
 ```
 
 未配置时使用上述地址。该地址需要部署 [Codex2API](https://github.com/gucooing/Codex2Api-rs) 后才能登录使用。修改地址后重启 ccodex。所有服务共用 ccodex 的登录数据，不按地址拆分凭据。
 
-`BASE_OAUTH_URL` 是包含 `/api/oauth/chatgpt` 的服务根地址，不要填写 `/oauth/token` 或 `/responses`。OAuth、ChatGPT backend-api、OpenAI v1 和第一方 HTTP/WebSocket 请求从该地址派生；第三方 MCP、其他供应商、文档和软件分发地址继续使用原配置。
+`BASE_OAUTH_URL` 是包含 `/v1/chatgpt` 的服务根地址，不要填写 `/oauth/token` 或 `/responses`。OAuth、ChatGPT backend-api、OpenAI v1 和第一方 HTTP/WebSocket 请求从该地址派生；第三方 MCP、其他供应商、文档和软件分发地址继续使用原配置。
 
 ```sh
 ccodex login

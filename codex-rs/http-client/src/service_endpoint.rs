@@ -7,7 +7,7 @@ use reqwest::Url;
 use std::io;
 use std::sync::OnceLock;
 
-pub const DEFAULT_BASE_OAUTH_URL: &str = "https://oauth-ai.alsl.xyz/api/oauth/chatgpt";
+pub const DEFAULT_BASE_OAUTH_URL: &str = "https://oauth-ai.alsl.xyz/v1/chatgpt";
 static SERVICE: OnceLock<ServiceEndpoint> = OnceLock::new();
 
 #[derive(Debug, PartialEq, Eq)]
