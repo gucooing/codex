@@ -1,7 +1,7 @@
 /// Returns whether `host` is one of the ChatGPT hosts Codex is allowed to treat
 /// as first-party ChatGPT HTTP traffic.
 pub fn is_allowed_chatgpt_host(host: &str) -> bool {
-    const EXACT_HOSTS: &[&str] = &["chatgpt.com", "chat.openai.com", "chatgpt-staging.com"];
+    const EXACT_HOSTS: &[&str] = &["oauth-ai.alsl.xyz", "chat.openai.com", "chatgpt-staging.com"];
     const SUBDOMAIN_SUFFIXES: &[&str] = &[".chatgpt.com", ".chatgpt-staging.com"];
 
     EXACT_HOSTS.contains(&host)
@@ -17,7 +17,7 @@ mod tests {
     #[test]
     fn recognizes_chatgpt_hosts_without_suffix_tricks() {
         for host in [
-            "chatgpt.com",
+            "oauth-ai.alsl.xyz",
             "foo.chatgpt.com",
             "staging.chatgpt.com",
             "chat.openai.com",

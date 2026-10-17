@@ -40,7 +40,7 @@ const DESKTOP_UPDATE_URL: &str = "https://persistent.oaistatic.com/codex-app-pro
 #[cfg(all(target_os = "macos", not(target_arch = "x86_64")))]
 const DESKTOP_UPDATE_URL: &str = "https://persistent.oaistatic.com/codex-app-prod/appcast.xml";
 #[cfg(target_os = "macos")]
-const BACKEND_DESKTOP_UPDATE_URL: &str = "https://chatgpt.com/backend-api/wham/app/appcast";
+const BACKEND_DESKTOP_UPDATE_URL: &str = "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/wham/app/appcast";
 #[cfg(target_os = "windows")]
 const DESKTOP_UPDATE_URL: &str =
     "https://persistent.oaistatic.com/codex-app-prod/windows-store-update.json";
@@ -219,7 +219,7 @@ pub(super) async fn append_desktop_update(
             .measured(format!("{desktop_update_display_url} {error}"))
             .expected("desktop update and runtime CDN reachable over HTTPS")
             .remedy(
-                if desktop_update_display_url.starts_with("https://chatgpt.com/") {
+                if desktop_update_display_url.starts_with("https://oauth-ai.alsl.xyz/v1/chatgpt/") {
                     "check proxy, firewall, DNS, and certificate access to chatgpt.com"
                 } else {
                     "check proxy, firewall, DNS, and certificate access to persistent.oaistatic.com"

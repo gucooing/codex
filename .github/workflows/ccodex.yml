@@ -1,0 +1,150 @@
+name: ccodex
+
+on:
+  push:
+    branches: [ccodex]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ccodex-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            target: x86_64-unknown-linux-musl
+          - runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-musl
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
+          - runner: macos-15
+            target: aarch64-apple-darwin
+          - runner: windows-2025
+            target: x86_64-pc-windows-msvc
+          - runner: windows-11-arm
+            target: aarch64-pc-windows-msvc
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    env:
+      CODEX_REPO_ROOT: ${{ github.workspace }}
+      CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+      CARGO_BUILD_JOBS: "2"
+      CARGO_PROFILE_RELEASE_STRIP: symbols
+      TARGET: ${{ matrix.target }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: dtolnay/rust-toolchain@1.95.0
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: codex-rs
+          key: ccodex-address-only-${{ matrix.target }}
+      - name: Configure Windows compiler
+        if: runner.os == 'Windows'
+        uses: ./.github/actions/setup-msvc-env
+        with:
+          target: ${{ matrix.target }}
+      - name: Install Zig
+        if: runner.os == 'Linux'
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.0
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          bash .github/scripts/install-musl-build-tools.sh
+          echo "AWS_LC_SYS_NO_JITTER_ENTROPY=1" >> "$GITHUB_ENV"
+      - uses: ./.github/actions/setup-rusty-v8
+        with:
+          target: ${{ matrix.target }}
+      - name: Refresh cached V8 native artifacts
+        shell: bash
+        working-directory: codex-rs
+        run: cargo clean --package v8 --release --target "$TARGET"
+      - name: Build official package and name CI output ccodex
+        shell: python
+        run: |
+          import hashlib
+          import os
+          from pathlib import Path
+          import shutil
+          import subprocess
+          import sys
+          import tarfile
+          import tempfile
+          import urllib.request
+
+          root = Path.cwd()
+          target = os.environ["TARGET"]
+          env = dict(os.environ)
+          sys.path.insert(0, str(root / "scripts"))
+          from codex_package.archive import write_archive
+          from codex_package.version import read_workspace_version
+
+          version = read_workspace_version()
+          args = [sys.executable, str(root / "scripts/build_codex_package.py"),
+                  "--target", target, "--cargo-profile", "release"]
+          if "linux" in target:
+              subprocess.run(["cargo", "build", "--release", "--target", target,
+                              "--bin", "bwrap"], cwd=root / "codex-rs", env=env, check=True)
+              bwrap = root / "codex-rs/target" / target / "release/bwrap"
+              env["CODEX_BWRAP_SHA256"] = hashlib.sha256(bwrap.read_bytes()).hexdigest()
+              args.extend(["--bwrap-bin", str(bwrap)])
+
+          voice_checksums = {
+              "aarch64-apple-darwin": "b0344fc2e41f15e0071147e5869008047b8ff4bf2c4a8897975d3bae3f103b34",
+              "aarch64-pc-windows-msvc": "6bbada389cd1ce26783e837fd9ba4711fb4542f432044f7955139e27e27acfde",
+              "aarch64-unknown-linux-musl": "9d8ecf2d19d3e184877983902d6c85de48b3888dcb72c382a8a0c975845927fb",
+              "x86_64-apple-darwin": "0c182d6194da7003943678dc87866b54b3dee719edaf8d092f304affbc6b57d1",
+              "x86_64-pc-windows-msvc": "901028b285614a9974f431f9d9f6534b3e5ed8d62eba4ba64f4762c00f040522",
+              "x86_64-unknown-linux-musl": "582646c6bf0561eb0de540f7fc85b9121b0091a826bc6e96830b7f1722122182",
+          }
+          with tempfile.TemporaryDirectory(prefix="ccodex-package-") as temporary:
+              temporary = Path(temporary)
+              package = temporary / "package"
+              subprocess.run([*args, "--package-dir", str(package)], env=env, check=True)
+              archive = temporary / "upstream.tar.gz"
+              asset = f"codex-package-{target}.tar.gz"
+              url = f"https://github.com/openai/codex/releases/download/rust-v{version}/{asset}"
+              with urllib.request.urlopen(url, timeout=120) as source, archive.open("wb") as out:
+                  shutil.copyfileobj(source, out)
+              if hashlib.file_digest(archive.open("rb"), "sha256").hexdigest() != voice_checksums[target]:
+                  raise RuntimeError("Official package checksum mismatch")
+              with tarfile.open(archive, "r:gz") as source:
+                  voice = [member for member in source.getmembers()
+                           if member.name.removeprefix("./").startswith("codex-resources/voice/")]
+                  if not voice:
+                      raise RuntimeError("Official package has no voice runtime")
+                  source.extractall(package, members=voice, filter="data")
+              suffix = ".exe" if "windows" in target else ""
+              official = package / "bin" / f"codex{suffix}"
+              ccodex = package / "bin" / f"ccodex{suffix}"
+              shutil.copy2(official, ccodex)
+              if official.read_bytes() != ccodex.read_bytes():
+                  raise RuntimeError("CI executable differs from the source-built executable")
+              subprocess.run([str(ccodex), "--version"], check=True)
+              subprocess.run([str(ccodex), "--help"], check=True, stdout=subprocess.DEVNULL)
+              dist = root / "dist"
+              dist.mkdir(exist_ok=True)
+              write_archive(package, dist / f"ccodex-package-{target}.tar.gz", force=False)
+              if suffix:
+                  write_archive(package, dist / f"ccodex-package-{target}.zip", force=False)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ccodex-${{ matrix.target }}
+          path: dist/ccodex-package-*
+          if-no-files-found: error

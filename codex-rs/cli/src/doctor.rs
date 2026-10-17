@@ -2589,7 +2589,7 @@ fn default_reachability_plan() -> ReachabilityPlan {
         /*provider_base_url*/ None,
         /*provider_query_params*/ None,
         /*is_amazon_bedrock*/ false,
-        "https://chatgpt.com/backend-api/",
+        "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/",
     )
 }
 
@@ -2639,7 +2639,7 @@ fn provider_reachability_plan_from_parts(
 ) -> ReachabilityPlan {
     let provider_route_probe_url = provider_base_url
         .or_else(|| {
-            (mode == ProviderAuthReachabilityMode::ApiKey).then_some("https://api.openai.com/v1")
+            (mode == ProviderAuthReachabilityMode::ApiKey).then_some("https://oauth-ai.alsl.xyz/v1/chatgpt/v1")
         })
         .and_then(|url| {
             should_probe_models_route(provider_name, url, is_amazon_bedrock)
@@ -2649,7 +2649,7 @@ fn provider_reachability_plan_from_parts(
         (ProviderAuthReachabilityMode::ApiKey, _) | (_, Some(_)) => vec![ReachabilityEndpoint {
             label: format!("{provider_id} API"),
             url: provider_url_for_path(
-                provider_base_url.unwrap_or("https://api.openai.com/v1"),
+                provider_base_url.unwrap_or("https://oauth-ai.alsl.xyz/v1/chatgpt/v1"),
                 "responses",
                 provider_query_params,
             ),
@@ -2783,7 +2783,7 @@ async fn provider_reachability_check(plan: ReachabilityPlan) -> DoctorCheck {
                     )
                     .measured(format!("{route_probe_url} returned {status}"))
                     .expected("GET /models returns 2xx, 401, or 403")
-                    .remedy("Set base_url to the provider API root, for example https://api.openai.com/v1")
+                    .remedy("Set base_url to the provider API root, for example https://oauth-ai.alsl.xyz/v1/chatgpt/v1")
                     .field("route probe"),
                 );
             }
@@ -3646,7 +3646,7 @@ mod tests {
                 Some("https://example.openai.azure.com/openai/v1"),
                 /*provider_query_params*/ None,
                 /*is_amazon_bedrock*/ false,
-                "https://chatgpt.com/backend-api/",
+                "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/",
             ),
             ReachabilityPlan {
                 description: "provider auth".to_string(),
@@ -3677,7 +3677,7 @@ mod tests {
                     Some("https://example.com/openai/v1/"),
                     Some(&query_params),
                     /*is_amazon_bedrock*/ false,
-                    "https://chatgpt.com/backend-api/",
+                    "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/",
                 ),
                 ReachabilityPlan {
                     description: description.to_string(),
@@ -3708,7 +3708,7 @@ mod tests {
             Some("https://bedrock-runtime.us-east-1.amazonaws.com/openai/v1"),
             /*provider_query_params*/ None,
             /*is_amazon_bedrock*/ true,
-            "https://chatgpt.com/backend-api/",
+            "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/",
         );
 
         assert_eq!(plan.endpoints[0].route_probe_url, None);
@@ -3723,16 +3723,16 @@ mod tests {
             /*provider_base_url*/ None,
             /*provider_query_params*/ None,
             /*is_amazon_bedrock*/ false,
-            "https://chatgpt.com/backend-api/",
+            "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/",
         );
 
         assert_eq!(
             plan.endpoints,
             vec![ReachabilityEndpoint {
                 label: "openai API".to_string(),
-                url: "https://api.openai.com/v1/responses".to_string(),
+                url: "https://oauth-ai.alsl.xyz/v1/chatgpt/v1/responses".to_string(),
                 required: true,
-                route_probe_url: Some("https://api.openai.com/v1/models".to_string()),
+                route_probe_url: Some("https://oauth-ai.alsl.xyz/v1/chatgpt/v1/models".to_string()),
             }]
         );
     }
@@ -3743,7 +3743,7 @@ mod tests {
             default_reachability_plan().endpoints,
             vec![ReachabilityEndpoint {
                 label: "ChatGPT".to_string(),
-                url: "https://chatgpt.com/backend-api/codex/responses".to_string(),
+                url: "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/codex/responses".to_string(),
                 required: true,
                 route_probe_url: None,
             }]
@@ -3789,7 +3789,7 @@ mod tests {
             Some(&format!("http://{addr}/xxxx")),
             /*provider_query_params*/ None,
             /*is_amazon_bedrock*/ false,
-            "https://chatgpt.com/backend-api/",
+            "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/",
         );
 
         let check = provider_reachability_check(plan).await;
@@ -3805,7 +3805,7 @@ mod tests {
         assert_eq!(check.issues.len(), 1);
         assert_eq!(
             check.issues[0].remedy.as_deref(),
-            Some("Set base_url to the provider API root, for example https://api.openai.com/v1")
+            Some("Set base_url to the provider API root, for example https://oauth-ai.alsl.xyz/v1/chatgpt/v1")
         );
     }
 
@@ -3830,7 +3830,7 @@ mod tests {
             Some(&format!("http://{addr}/v1")),
             /*provider_query_params*/ None,
             /*is_amazon_bedrock*/ false,
-            "https://chatgpt.com/backend-api/",
+            "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/",
         );
 
         let check = provider_reachability_check(plan).await;

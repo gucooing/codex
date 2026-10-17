@@ -27,7 +27,7 @@ use tokio::task::AbortHandle;
 use tokio::task::JoinHandle;
 
 const MAX_CONCURRENT_REQUESTS: usize = 16;
-pub(super) const URL: &str = "https://api.openai.com/v1/decisions";
+pub(super) const URL: &str = "https://oauth-ai.alsl.xyz/v1/chatgpt/v1/decisions";
 const MODEL: &str = "gpt-6-luna";
 // Provisional local rollout budgets, not Decisions API limits or model context limits.
 // Guardian owns the text/context budget; bound HTTP lifetime, image bytes and response buffering here.

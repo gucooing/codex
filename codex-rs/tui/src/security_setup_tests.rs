@@ -5,7 +5,7 @@ use serde_json::json;
 #[test]
 fn security_setup_rejects_unsafe_actions_and_terminal_controls() {
     let value = json!({"title":"Keep using Daybreak mode","description":"Set up security.",
-        "action":{"label":"Set up security","url":"https://chatgpt.com/cyber"}});
+        "action":{"label":"Set up security","url":"https://oauth-ai.alsl.xyz/v1/chatgpt/cyber"}});
     let notice: Notice = serde_json::from_value(value.clone()).unwrap();
     assert!(notice.valid());
     for url in [

@@ -60,7 +60,7 @@ impl Notice {
             && !self.action.label.chars().any(char::is_control)
             && url::Url::parse(&self.action.url).is_ok_and(|url| {
                 url.scheme() == "https"
-                    && url.host_str() == Some("chatgpt.com")
+                    && url.host_str() == Some("oauth-ai.alsl.xyz")
                     && url.username().is_empty()
                     && url.password().is_none()
                     && url.port().is_none()

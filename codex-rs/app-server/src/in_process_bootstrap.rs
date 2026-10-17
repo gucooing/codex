@@ -81,7 +81,7 @@ impl EmbeddedNetworkPolicy {
         let endpoint = codex_backend_client::Client::new(
             auth.chatgpt_base_url
                 .as_deref()
-                .unwrap_or("https://chatgpt.com/backend-api/"),
+                .unwrap_or("https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/"),
             factory.clone(),
         )
         .config_bundle_url();

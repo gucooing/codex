@@ -219,7 +219,7 @@ pub(super) fn validate_external_url(url: &str, require_chatgpt_host: bool) -> Op
 
 fn is_allowed_chatgpt_auth_host(host: &str) -> bool {
     let host = host.to_ascii_lowercase();
-    host == "chatgpt.com"
+    host == "oauth-ai.alsl.xyz"
         || host == "chatgpt-staging.com"
         || host.ends_with(".chatgpt.com")
         || host.ends_with(".chatgpt-staging.com")
@@ -933,7 +933,7 @@ mod tests {
     fn codex_apps_auth_url_elicitation_builds_auth_app_link_params() {
         let target = suggestion_target();
         let request =
-            auth_url_request("https://chatgpt.com/apps/google-calendar/connector_calendar");
+            auth_url_request("https://oauth-ai.alsl.xyz/v1/chatgpt/apps/google-calendar/connector_calendar");
 
         let params = AppLinkViewParams::from_url_app_server_request(
             target.thread_id,
@@ -947,7 +947,7 @@ mod tests {
         assert_eq!(params.title, "Google Calendar");
         assert_eq!(
             params.url,
-            "https://chatgpt.com/apps/google-calendar/connector_calendar"
+            "https://oauth-ai.alsl.xyz/v1/chatgpt/apps/google-calendar/connector_calendar"
         );
         assert_eq!(params.suggestion_type, Some(AppLinkSuggestionType::Auth));
         assert_eq!(params.elicitation_target, Some(target));
@@ -1659,7 +1659,7 @@ mod tests {
                 title: "Google Calendar".to_string(),
                 description: None,
                 instructions: "Sign in to this app in your browser, then return here.".to_string(),
-                url: "https://chatgpt.com/apps/google-calendar/connector_google_calendar"
+                url: "https://oauth-ai.alsl.xyz/v1/chatgpt/apps/google-calendar/connector_google_calendar"
                     .to_string(),
                 is_installed: true,
                 is_enabled: true,

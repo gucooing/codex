@@ -181,7 +181,7 @@ pub enum CodexErrorDetails {
     #[error("Quota exceeded. Check your plan and billing details.")]
     QuotaExceeded,
     #[error(
-        "To use Codex with your ChatGPT plan, upgrade to Plus: https://chatgpt.com/explore/plus."
+        "To use Codex with your ChatGPT plan, upgrade to Plus: https://oauth-ai.alsl.xyz/v1/chatgpt/explore/plus."
     )]
     UsageNotIncluded,
     #[error("We’re currently experiencing high demand, which may cause temporary errors.")]
@@ -774,7 +774,7 @@ impl std::fmt::Display for UsageLimitReachedError {
 
         let message = match self.plan_type.as_ref() {
             Some(PlanType::Known(KnownPlan::Plus)) => format!(
-                "You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits{}",
+                "You’ve hit your usage limit. Upgrade to Pro (https://oauth-ai.alsl.xyz/v1/chatgpt/explore/pro), visit https://oauth-ai.alsl.xyz/v1/chatgpt/settings/usage to purchase more credits{}",
                 retry_suffix_after_or(self.resets_at.as_ref())
             ),
             Some(PlanType::Known(
@@ -793,13 +793,13 @@ impl std::fmt::Display for UsageLimitReachedError {
             }
             Some(PlanType::Known(KnownPlan::Free)) | Some(PlanType::Known(KnownPlan::Go)) => {
                 format!(
-                    "You’ve hit your usage limit. Upgrade to Plus to continue using Codex (https://chatgpt.com/explore/plus),{}",
+                    "You’ve hit your usage limit. Upgrade to Plus to continue using Codex (https://oauth-ai.alsl.xyz/v1/chatgpt/explore/plus),{}",
                     retry_suffix_after_or(self.resets_at.as_ref())
                 )
             }
             Some(PlanType::Known(KnownPlan::Pro | KnownPlan::ProLite | KnownPlan::ProMax)) => {
                 format!(
-                    "You’ve hit your usage limit. Visit https://chatgpt.com/settings/usage to purchase more credits{}",
+                    "You’ve hit your usage limit. Visit https://oauth-ai.alsl.xyz/v1/chatgpt/settings/usage to purchase more credits{}",
                     retry_suffix_after_or(self.resets_at.as_ref())
                 )
             }

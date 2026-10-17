@@ -29,7 +29,7 @@ use super::RefreshTokenFailedError;
 use super::RefreshTokenFailedReason;
 use crate::AuthRouteConfig;
 
-const PROD_TOKEN_URL: &str = "https://auth.openai.com/oauth/token";
+const PROD_TOKEN_URL: &str = "https://oauth-ai.alsl.xyz/v1/chatgpt/oauth/token";
 const STAGING_TOKEN_URL: &str = "https://auth.api.openai.org/oauth/token";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -217,10 +217,10 @@ fn classify_auth_environment(
     base_url: &str,
 ) -> Result<WorkloadIdentityEnvironment, WorkloadIdentitySessionError> {
     match base_url.trim().trim_end_matches('/') {
-        "https://chatgpt.com"
-        | "https://chatgpt.com/backend-api"
-        | "https://chatgpt.com/codex"
-        | "https://chatgpt.com/backend-api/codex"
+        "https://oauth-ai.alsl.xyz/v1/chatgpt"
+        | "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api"
+        | "https://oauth-ai.alsl.xyz/v1/chatgpt/codex"
+        | "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/codex"
         | "https://chat.openai.com"
         | "https://chat.openai.com/backend-api"
         | "https://chat.openai.com/codex"
@@ -377,7 +377,7 @@ impl WorkloadIdentityExternalAuth {
             auth_config
                 .chatgpt_base_url
                 .as_deref()
-                .unwrap_or("https://chatgpt.com/backend-api"),
+                .unwrap_or("https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api"),
             ProcessEnvironment::read(),
             auth_config.is_login_method_allowed(ForcedLoginMethod::Chatgpt),
             auth_config.auth_route_config.clone(),

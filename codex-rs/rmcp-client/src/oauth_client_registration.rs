@@ -117,9 +117,9 @@ pub(crate) async fn start_authorization(
         // to its self-referential JSON metadata document.
         // https://datatracker.ietf.org/doc/draft-ietf-oauth-client-id-metadata-document/
         let client_metadata_url = if uses_shared_callback {
-            "https://chatgpt.com/oauth/codex/client.json".to_string()
+            "https://oauth-ai.alsl.xyz/v1/chatgpt/oauth/codex/client.json".to_string()
         } else {
-            format!("https://chatgpt.com/oauth/codex/{callback_id}/client.json")
+            format!("https://oauth-ai.alsl.xyz/v1/chatgpt/oauth/codex/{callback_id}/client.json")
         };
         request = request.with_client_metadata_url(client_metadata_url);
     }

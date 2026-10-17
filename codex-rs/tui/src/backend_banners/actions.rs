@@ -4,8 +4,8 @@ use super::BackendBanner;
 use codex_app_server_protocol::AddCreditsNudgeCreditType;
 use codex_protocol::account::PlanType;
 
-const USAGE_URL: &str = "https://chatgpt.com/settings/usage";
-const WORKSPACE_USAGE_URL: &str = "https://chatgpt.com/admin/usage-limits/workspace";
+const USAGE_URL: &str = "https://oauth-ai.alsl.xyz/v1/chatgpt/settings/usage";
+const WORKSPACE_USAGE_URL: &str = "https://oauth-ai.alsl.xyz/v1/chatgpt/admin/usage-limits/workspace";
 
 pub(super) enum BannerAction {
     OpenUrl(String),
@@ -45,16 +45,16 @@ impl BackendBanner {
             "add_credits" | "buy_credits"
                 if self.plan_type.is_some_and(PlanType::is_workspace_account) =>
             {
-                "https://chatgpt.com/admin/billing?codex_credit_action=add_credits".to_string()
+                "https://oauth-ai.alsl.xyz/v1/chatgpt/admin/billing?codex_credit_action=add_credits".to_string()
             }
             "add_credits" | "buy_credits" => format!("{USAGE_URL}?credits_modal=true"),
-            "buy_reset" => "https://chatgpt.com/codex/purchase/reset".to_string(),
+            "buy_reset" => "https://oauth-ai.alsl.xyz/v1/chatgpt/codex/purchase/reset".to_string(),
             "view_usage" | "request_increase_usage_settings" => USAGE_URL.to_string(),
             "view_workspace_usage" | "increase_spend_cap" => WORKSPACE_USAGE_URL.to_string(),
-            "open_plus_pricing_web" => "https://chatgpt.com/explore/plus".to_string(),
-            "open_pro_pricing_web" => "https://chatgpt.com/explore/pro".to_string(),
+            "open_plus_pricing_web" => "https://oauth-ai.alsl.xyz/v1/chatgpt/explore/plus".to_string(),
+            "open_pro_pricing_web" => "https://oauth-ai.alsl.xyz/v1/chatgpt/explore/pro".to_string(),
             "open_pricing_dialog" => {
-                let mut url = url::Url::parse("https://chatgpt.com/").ok()?;
+                let mut url = url::Url::parse("https://oauth-ai.alsl.xyz/v1/chatgpt/").ok()?;
                 let target = if matches!(self.plan_type, Some(PlanType::Plus | PlanType::ProLite)) {
                     "pro"
                 } else {
