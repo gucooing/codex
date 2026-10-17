@@ -3,6 +3,7 @@ name: ccodex
 on:
   push:
     branches: [ccodex]
+    tags: ["ccodex-v*.*.*"]
   workflow_dispatch:
 
 permissions:
