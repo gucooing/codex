@@ -158,7 +158,7 @@ pub(crate) fn new_safety_access_block_event() -> SafetyAccessBlockCell {
         actions: &[
             (
                 "Trusted Access",
-                "https://chatgpt.com/r/b749fb02595e04c3007a54375f3f4374",
+                "https://oauth-ai.alsl.xyz/v1/chatgpt/r/b749fb02595e04c3007a54375f3f4374",
             ),
             ("Learn more", SAFETY_ACCESS_BLOCK_LEARN_MORE_URL),
         ],

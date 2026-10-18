@@ -608,7 +608,7 @@ fn codex_apps_mcp_bearer_token_env_var() -> Option<String> {
 
 fn normalize_codex_apps_base_url(base_url: &str) -> String {
     let mut base_url = base_url.trim_end_matches('/').to_string();
-    if (base_url.starts_with("https://chatgpt.com")
+    if (base_url.starts_with("https://oauth-ai.alsl.xyz/v1/chatgpt")
         || base_url.starts_with("https://chat.openai.com"))
         && !base_url.contains("/backend-api")
     {

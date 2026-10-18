@@ -629,7 +629,7 @@ impl AuthModeWidget {
             HyperlinkLine::new(Line::from("  Your plan's rate limits and ").dim());
         preferences_line.push_span(
             "training data preferences".underlined(),
-            Some("https://chatgpt.com/#settings"),
+            Some("https://oauth-ai.alsl.xyz/v1/chatgpt/#settings"),
         );
         preferences_line.push_span(" apply".into(), /*destination*/ None);
 
@@ -1440,7 +1440,7 @@ mod tests {
             SignInState::ChatGptDeviceCode(ContinueWithDeviceCodeState::ready(
                 "request-1".to_string(),
                 "login-1".to_string(),
-                "https://chatgpt.com/device".to_string(),
+                "https://oauth-ai.alsl.xyz/v1/chatgpt/device".to_string(),
                 "ABCD-EFGH".to_string(),
             ));
 
@@ -1525,7 +1525,7 @@ mod tests {
             "Codex docs"
         );
         assert_eq!(
-            collect_osc8_chars(&buf, area, "https://chatgpt.com/#settings"),
+            collect_osc8_chars(&buf, area, "https://oauth-ai.alsl.xyz/v1/chatgpt/#settings"),
             "training data preferences"
         );
         assert_eq!(
@@ -1581,7 +1581,7 @@ mod tests {
             SignInState::ChatGptDeviceCode(ContinueWithDeviceCodeState::ready(
                 "request-1".to_string(),
                 "login-1".to_string(),
-                "https://chatgpt.com/device".to_string(),
+                "https://oauth-ai.alsl.xyz/v1/chatgpt/device".to_string(),
                 "ABCD-EFGH".to_string(),
             ));
 
@@ -1606,7 +1606,7 @@ mod tests {
             SignInState::ChatGptDeviceCode(ContinueWithDeviceCodeState::ready(
                 "request-1".to_string(),
                 "login-1".to_string(),
-                "https://chatgpt.com/device".to_string(),
+                "https://oauth-ai.alsl.xyz/v1/chatgpt/device".to_string(),
                 "ABCD-EFGH".to_string(),
             ));
 

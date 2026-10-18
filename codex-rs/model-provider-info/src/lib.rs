@@ -77,7 +77,7 @@ const MAX_REQUEST_MAX_RETRIES: u64 = 100;
 const OPENAI_PROVIDER_NAME: &str = "OpenAI";
 const OPENAI_ACTOR_AUTHORIZATION_HEADER: &str = "x-openai-actor-authorization";
 pub const OPENAI_PROVIDER_ID: &str = "openai";
-pub const CHATGPT_CODEX_BASE_URL: &str = "https://chatgpt.com/backend-api/codex";
+pub const CHATGPT_CODEX_BASE_URL: &str = "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/codex";
 const AMAZON_BEDROCK_PROVIDER_NAME: &str = "Amazon Bedrock";
 pub const AMAZON_BEDROCK_PROVIDER_ID: &str = "amazon-bedrock";
 const AMAZON_BEDROCK_RUNTIME_PROVIDER_NAME: &str = "Amazon Bedrock Runtime";
@@ -437,7 +437,7 @@ other non-default provider fields are not supported"
         ) {
             CHATGPT_CODEX_BASE_URL
         } else {
-            "https://api.openai.com/v1"
+            "https://oauth-ai.alsl.xyz/v1/chatgpt/v1"
         };
         let base_url = self
             .base_url

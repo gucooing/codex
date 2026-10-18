@@ -32,7 +32,7 @@ pub fn append_error_log(message: impl AsRef<str>) {
 /// - appends '/backend-api' for ChatGPT hosts when missing
 pub fn normalize_base_url(input: &str) -> String {
     let mut base_url = input.trim_end_matches('/').to_string();
-    if (base_url.starts_with("https://chatgpt.com")
+    if (base_url.starts_with("https://oauth-ai.alsl.xyz/v1/chatgpt")
         || base_url.starts_with("https://chat.openai.com"))
         && !base_url.contains("/backend-api")
     {
@@ -58,8 +58,8 @@ pub(crate) fn validate_chatgpt_base_url(input: &str) -> anyhow::Result<String> {
     if uri.scheme_str() != Some("https")
         || !matches!(
             authority.as_str(),
-            "chatgpt.com"
-                | "chatgpt.com:443"
+            "oauth-ai.alsl.xyz"
+                | "oauth-ai.alsl.xyz:443"
                 | "chat.openai.com"
                 | "chat.openai.com:443"
                 | "chatgpt-staging.com"
@@ -183,10 +183,10 @@ mod tests {
             ("https://example.com/path///", "https://example.com/path"),
             ("", ""),
             ("///", ""),
-            ("https://chatgpt.com///", "https://chatgpt.com/backend-api"),
+            ("https://oauth-ai.alsl.xyz/v1/chatgpt///", "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api"),
             (
-                "https://chatgpt.com/backend-api///",
-                "https://chatgpt.com/backend-api",
+                "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api///",
+                "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api",
             ),
             (
                 "https://chat.openai.com///",

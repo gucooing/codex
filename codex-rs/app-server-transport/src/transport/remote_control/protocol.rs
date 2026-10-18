@@ -194,7 +194,7 @@ fn is_allowed_remote_control_chatgpt_host(host: &Option<Host<&str>>) -> bool {
     let Some(Host::Domain(host)) = *host else {
         return false;
     };
-    host == "chatgpt.com"
+    host == "oauth-ai.alsl.xyz"
         || host == "chatgpt-staging.com"
         || host.ends_with(".chatgpt.com")
         || host.ends_with(".chatgpt-staging.com")
@@ -297,19 +297,19 @@ mod tests {
     #[test]
     fn normalize_remote_control_url_accepts_chatgpt_https_urls() {
         assert_eq!(
-            normalize_remote_control_url("https://chatgpt.com/backend-api")
+            normalize_remote_control_url("https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api")
                 .expect("chatgpt.com URL should normalize"),
             RemoteControlTarget {
-                websocket_url: "wss://chatgpt.com/backend-api/wham/remote/control/server"
+                websocket_url: "wss://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/wham/remote/control/server"
                     .to_string(),
-                enroll_url: "https://chatgpt.com/backend-api/wham/remote/control/server/enroll"
+                enroll_url: "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/wham/remote/control/server/enroll"
                     .to_string(),
-                refresh_url: "https://chatgpt.com/backend-api/wham/remote/control/server/refresh"
+                refresh_url: "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/wham/remote/control/server/refresh"
                     .to_string(),
-                pair_url: "https://chatgpt.com/backend-api/wham/remote/control/server/pair"
+                pair_url: "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/wham/remote/control/server/pair"
                     .to_string(),
                 pair_status_url:
-                    "https://chatgpt.com/backend-api/wham/remote/control/server/pair/status"
+                    "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/wham/remote/control/server/pair/status"
                         .to_string(),
             }
         );

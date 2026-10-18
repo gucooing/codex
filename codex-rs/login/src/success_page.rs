@@ -4,7 +4,7 @@ use url::Url;
 
 use crate::server::DEFAULT_ISSUER;
 
-pub const CODEX_OPEN_APP_URL: &str = "https://chatgpt.com/codex/open-app";
+pub const CODEX_OPEN_APP_URL: &str = "https://oauth-ai.alsl.xyz/v1/chatgpt/codex/open-app";
 
 #[derive(Debug, Clone, Default, Eq, PartialEq)]
 pub enum LoginSuccessPage {
@@ -80,7 +80,7 @@ pub(crate) fn compose_success_url(
         .and_then(|value| value.as_str())
         .unwrap_or("");
     let platform_url = if issuer == DEFAULT_ISSUER {
-        "https://platform.openai.com"
+        "https://oauth-ai.alsl.xyz/v1/chatgpt"
     } else {
         "https://platform.api.openai.org"
     };

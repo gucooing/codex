@@ -355,7 +355,7 @@ async fn new_config(
         chatgpt_base_url: auth_config
             .chatgpt_base_url
             .clone()
-            .unwrap_or_else(|| "https://chatgpt.com/backend-api/".to_string()),
+            .unwrap_or_else(|| "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/".to_string()),
         respect_system_proxy,
         apps_mcp_product_sku: None,
         responses_api_metadata: BTreeMap::new(),
