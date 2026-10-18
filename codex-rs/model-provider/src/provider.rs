@@ -115,7 +115,8 @@ pub trait ModelProvider: fmt::Debug + Send + Sync {
             || url::Url::parse(&provider.base_url).ok().is_some_and(|url| {
                 url.scheme() == "https"
                     && url.host_str().is_some_and(|host| {
-                        host == "oauth-ai.alsl.xyz" || codex_http_client::is_allowed_chatgpt_host(host)
+                        host == "oauth-ai.alsl.xyz"
+                            || codex_http_client::is_allowed_chatgpt_host(host)
                     })
             })
     }

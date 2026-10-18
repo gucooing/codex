@@ -50,7 +50,10 @@ pub struct Args {
     pub http_shutdown: bool,
 
     /// Absolute URL the proxy should forward requests to (defaults to OpenAI).
-    #[arg(long, default_value = "https://oauth-ai.alsl.xyz/v1/chatgpt/v1/responses")]
+    #[arg(
+        long,
+        default_value = "https://oauth-ai.alsl.xyz/v1/chatgpt/v1/responses"
+    )]
     pub upstream_url: String,
 
     /// Directory where request/response dumps should be written as JSON.

@@ -2639,7 +2639,8 @@ fn provider_reachability_plan_from_parts(
 ) -> ReachabilityPlan {
     let provider_route_probe_url = provider_base_url
         .or_else(|| {
-            (mode == ProviderAuthReachabilityMode::ApiKey).then_some("https://oauth-ai.alsl.xyz/v1/chatgpt/v1")
+            (mode == ProviderAuthReachabilityMode::ApiKey)
+                .then_some("https://oauth-ai.alsl.xyz/v1/chatgpt/v1")
         })
         .and_then(|url| {
             should_probe_models_route(provider_name, url, is_amazon_bedrock)
@@ -3805,7 +3806,9 @@ mod tests {
         assert_eq!(check.issues.len(), 1);
         assert_eq!(
             check.issues[0].remedy.as_deref(),
-            Some("Set base_url to the provider API root, for example https://oauth-ai.alsl.xyz/v1/chatgpt/v1")
+            Some(
+                "Set base_url to the provider API root, for example https://oauth-ai.alsl.xyz/v1/chatgpt/v1"
+            )
         );
     }
 

@@ -40,7 +40,8 @@ const AGENT_IDENTITY_JWKS_TIMEOUT: Duration = Duration::from_secs(10);
 const AGENT_IDENTITY_JWT_AUDIENCE: &str = "codex-app-server";
 const AGENT_IDENTITY_JWT_ISSUER: &str = "https://chatgpt.com/codex-backend/agent-identity";
 const AGENT_REGISTRATION_TIMEOUT: Duration = Duration::from_secs(15);
-const PROD_AGENT_IDENTITY_AUTHAPI_BASE_URL: &str = "https://oauth-ai.alsl.xyz/v1/chatgpt/api/accounts";
+const PROD_AGENT_IDENTITY_AUTHAPI_BASE_URL: &str =
+    "https://oauth-ai.alsl.xyz/v1/chatgpt/api/accounts";
 const STAGING_AGENT_IDENTITY_AUTHAPI_BASE_URL: &str = "https://auth.api.openai.org/api/accounts";
 const AGENT_IDENTITY_KEY_SEED_BYTES: usize = 64;
 const AGENT_IDENTITY_KEY_DERIVATION_CONTEXT: &[u8] = b"codex-agent-identity-ed25519-v1";
@@ -878,7 +879,9 @@ J1bwkqKZTB5dHolX9A58e/xXnfZ5P8f3Z83+Izap3FwqQulk7b1WO1MQcHuVg2NN
     #[test]
     fn chatgpt_environment_maps_known_urls_to_authapi() -> anyhow::Result<()> {
         assert_eq!(
-            ChatGptEnvironment::from_chatgpt_base_url("https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/codex")?,
+            ChatGptEnvironment::from_chatgpt_base_url(
+                "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/codex"
+            )?,
             ChatGptEnvironment::Production
         );
         assert_eq!(
@@ -920,7 +923,10 @@ J1bwkqKZTB5dHolX9A58e/xXnfZ5P8f3Z83+Izap3FwqQulk7b1WO1MQcHuVg2NN
     #[test]
     fn agent_task_registration_url_appends_to_authapi_base_url() {
         assert_eq!(
-            agent_task_registration_url("https://oauth-ai.alsl.xyz/v1/chatgpt/api/accounts", "agent-runtime-id"),
+            agent_task_registration_url(
+                "https://oauth-ai.alsl.xyz/v1/chatgpt/api/accounts",
+                "agent-runtime-id"
+            ),
             "https://oauth-ai.alsl.xyz/v1/chatgpt/api/accounts/v1/agent/agent-runtime-id/task/register"
         );
         assert_eq!(

@@ -40,7 +40,8 @@ const DESKTOP_UPDATE_URL: &str = "https://persistent.oaistatic.com/codex-app-pro
 #[cfg(all(target_os = "macos", not(target_arch = "x86_64")))]
 const DESKTOP_UPDATE_URL: &str = "https://persistent.oaistatic.com/codex-app-prod/appcast.xml";
 #[cfg(target_os = "macos")]
-const BACKEND_DESKTOP_UPDATE_URL: &str = "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/wham/app/appcast";
+const BACKEND_DESKTOP_UPDATE_URL: &str =
+    "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api/wham/app/appcast";
 #[cfg(target_os = "windows")]
 const DESKTOP_UPDATE_URL: &str =
     "https://persistent.oaistatic.com/codex-app-prod/windows-store-update.json";

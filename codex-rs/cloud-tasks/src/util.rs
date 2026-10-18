@@ -183,7 +183,10 @@ mod tests {
             ("https://example.com/path///", "https://example.com/path"),
             ("", ""),
             ("///", ""),
-            ("https://oauth-ai.alsl.xyz/v1/chatgpt///", "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api"),
+            (
+                "https://oauth-ai.alsl.xyz/v1/chatgpt///",
+                "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api",
+            ),
             (
                 "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api///",
                 "https://oauth-ai.alsl.xyz/v1/chatgpt/backend-api",

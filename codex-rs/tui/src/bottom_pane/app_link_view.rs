@@ -932,8 +932,9 @@ mod tests {
     #[test]
     fn codex_apps_auth_url_elicitation_builds_auth_app_link_params() {
         let target = suggestion_target();
-        let request =
-            auth_url_request("https://oauth-ai.alsl.xyz/v1/chatgpt/apps/google-calendar/connector_calendar");
+        let request = auth_url_request(
+            "https://oauth-ai.alsl.xyz/v1/chatgpt/apps/google-calendar/connector_calendar",
+        );
 
         let params = AppLinkViewParams::from_url_app_server_request(
             target.thread_id,

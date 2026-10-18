@@ -2348,7 +2348,8 @@ mod tests {
     #[tokio::test]
     async fn collect_attempt_diffs_includes_sibling_attempts() {
         let backend = MockClient;
-        let task_id = parse_task_id("https://oauth-ai.alsl.xyz/v1/chatgpt/codex/tasks/T-1000").expect("id");
+        let task_id =
+            parse_task_id("https://oauth-ai.alsl.xyz/v1/chatgpt/codex/tasks/T-1000").expect("id");
         let attempts = collect_attempt_diffs(&backend, &task_id)
             .await
             .expect("attempts");
@@ -2376,7 +2377,8 @@ mod tests {
         let raw = parse_task_id("task_i_abc123").expect("raw id");
         assert_eq!(raw.0, "task_i_abc123");
         let url =
-            parse_task_id("https://oauth-ai.alsl.xyz/v1/chatgpt/codex/tasks/task_i_123456?foo=bar").expect("url id");
+            parse_task_id("https://oauth-ai.alsl.xyz/v1/chatgpt/codex/tasks/task_i_123456?foo=bar")
+                .expect("url id");
         assert_eq!(url.0, "task_i_123456");
         assert!(parse_task_id("   ").is_err());
     }
