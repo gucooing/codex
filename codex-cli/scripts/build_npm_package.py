@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage and optionally package the @openai/codex npm module."""
+"""Stage and optionally package the @gucooing/ccodex npm module."""
 
 import argparse
 import json
@@ -15,49 +15,49 @@ CODEX_CLI_ROOT = SCRIPT_DIR.parent
 REPO_ROOT = CODEX_CLI_ROOT.parent
 RESPONSES_API_PROXY_NPM_ROOT = REPO_ROOT / "codex-rs" / "responses-api-proxy" / "npm"
 CODEX_SDK_ROOT = REPO_ROOT / "sdk" / "typescript"
-CODEX_NPM_NAME = "@openai/codex"
+CODEX_NPM_NAME = "@gucooing/ccodex"
 CODEX_PACKAGE_COMPONENT = "codex-package"
 
-# `npm_name` is the local optional-dependency alias consumed by `bin/codex.js`.
-# The underlying package published to npm is always `@openai/codex`.
+# `npm_name` is the local optional-dependency alias consumed by `bin/ccodex.js`.
+# The underlying package published to npm is always `@gucooing/ccodex`.
 CODEX_PLATFORM_PACKAGES: dict[str, dict[str, str]] = {
     "codex-linux-x64": {
-        "npm_name": "@openai/codex-linux-x64",
+        "npm_name": "@gucooing/ccodex-linux-x64",
         "npm_tag": "linux-x64",
         "target_triple": "x86_64-unknown-linux-musl",
         "os": "linux",
         "cpu": "x64",
     },
     "codex-linux-arm64": {
-        "npm_name": "@openai/codex-linux-arm64",
+        "npm_name": "@gucooing/ccodex-linux-arm64",
         "npm_tag": "linux-arm64",
         "target_triple": "aarch64-unknown-linux-musl",
         "os": "linux",
         "cpu": "arm64",
     },
     "codex-darwin-x64": {
-        "npm_name": "@openai/codex-darwin-x64",
+        "npm_name": "@gucooing/ccodex-darwin-x64",
         "npm_tag": "darwin-x64",
         "target_triple": "x86_64-apple-darwin",
         "os": "darwin",
         "cpu": "x64",
     },
     "codex-darwin-arm64": {
-        "npm_name": "@openai/codex-darwin-arm64",
+        "npm_name": "@gucooing/ccodex-darwin-arm64",
         "npm_tag": "darwin-arm64",
         "target_triple": "aarch64-apple-darwin",
         "os": "darwin",
         "cpu": "arm64",
     },
     "codex-win32-x64": {
-        "npm_name": "@openai/codex-win32-x64",
+        "npm_name": "@gucooing/ccodex-win32-x64",
         "npm_tag": "win32-x64",
         "target_triple": "x86_64-pc-windows-msvc",
         "os": "win32",
         "cpu": "x64",
     },
     "codex-win32-arm64": {
-        "npm_name": "@openai/codex-win32-arm64",
+        "npm_name": "@gucooing/ccodex-win32-arm64",
         "npm_tag": "win32-arm64",
         "target_triple": "aarch64-pc-windows-msvc",
         "os": "win32",
@@ -181,8 +181,8 @@ def main() -> int:
                 print(
                     f"Staged version {version} for release in {staging_dir_str}\n\n"
                     "Verify the CLI:\n"
-                    f"    node {staging_dir_str}/bin/codex.js --version\n"
-                    f"    node {staging_dir_str}/bin/codex.js --help\n\n"
+                    f"    node {staging_dir_str}/bin/ccodex.js --version\n"
+                    f"    node {staging_dir_str}/bin/ccodex.js --help\n\n"
                 )
             elif package == "codex-responses-api-proxy":
                 print(
@@ -236,7 +236,7 @@ def stage_sources(staging_dir: Path, version: str, package: str) -> None:
     if package == "codex":
         bin_dir = staging_dir / "bin"
         bin_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(CODEX_CLI_ROOT / "bin" / "codex.js", bin_dir / "codex.js")
+        shutil.copy2(CODEX_CLI_ROOT / "bin" / "ccodex.js", bin_dir / "ccodex.js")
 
         readme_src = REPO_ROOT / "README.md"
         if readme_src.exists():
@@ -297,7 +297,7 @@ def stage_sources(staging_dir: Path, version: str, package: str) -> None:
         package_json["version"] = version
 
     if package == "codex":
-        package_json["files"] = ["bin/codex.js"]
+        package_json["files"] = ["bin/ccodex.js"]
         package_json["optionalDependencies"] = {
             CODEX_PLATFORM_PACKAGES[platform_package]["npm_name"]: (
                 f"npm:{CODEX_NPM_NAME}@"
@@ -329,7 +329,24 @@ def compute_platform_package_version(version: str, platform_tag: str) -> str:
     return f"{version}-{platform_tag}"
 
 
+def npm_command() -> list[str]:
+    executable = shutil.which("npm.cmd" if os.name == "nt" else "npm")
+    if executable is None:
+        raise RuntimeError("npm was not found on PATH; install Node.js before packaging.")
+    if os.name != "nt":
+        return [executable]
+    # CreateProcess does not resolve `npm` to npm.cmd. Invoke its JS entrypoint
+    # directly so paths with spaces or shell metacharacters remain literal args.
+    node = shutil.which("node")
+    entrypoint = Path(executable).parent / "node_modules" / "npm" / "bin" / "npm-cli.js"
+    if node is None or not entrypoint.is_file():
+        raise RuntimeError("Cannot locate node and npm-cli.js beside the Windows npm launcher.")
+    return [node, str(entrypoint)]
+
+
 def run_command(cmd: list[str], cwd: Path | None = None) -> None:
+    if cmd and cmd[0] == "npm":
+        cmd = [*npm_command(), *cmd[1:]]
     print("+", " ".join(cmd), flush=True)
     subprocess.run(cmd, cwd=cwd, check=True)
 
@@ -429,7 +446,7 @@ def run_npm_pack(staging_dir: Path, output_path: Path) -> Path:
         env["NPM_CONFIG_CACHE"] = str(npm_cache_dir)
         env["NPM_CONFIG_LOGS_DIR"] = str(npm_logs_dir)
         stdout = subprocess.check_output(
-            ["npm", "pack", "--json", "--pack-destination", str(pack_dir)],
+            [*npm_command(), "pack", "--json", "--pack-destination", str(pack_dir)],
             cwd=staging_dir,
             env=env,
             text=True,

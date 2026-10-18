@@ -1,0 +1,12 @@
+{
+  "tag": "rust-v0.163.0",
+  "commit": "83086188ae0614bd882818ff1aa23f3194962012",
+  "assets": {
+    "codex-package-aarch64-apple-darwin.tar.gz": "b0344fc2e41f15e0071147e5869008047b8ff4bf2c4a8897975d3bae3f103b34",
+    "codex-package-aarch64-pc-windows-msvc.tar.gz": "6bbada389cd1ce26783e837fd9ba4711fb4542f432044f7955139e27e27acfde",
+    "codex-package-aarch64-unknown-linux-musl.tar.gz": "9d8ecf2d19d3e184877983902d6c85de48b3888dcb72c382a8a0c975845927fb",
+    "codex-package-x86_64-apple-darwin.tar.gz": "0c182d6194da7003943678dc87866b54b3dee719edaf8d092f304affbc6b57d1",
+    "codex-package-x86_64-pc-windows-msvc.tar.gz": "901028b285614a9974f431f9d9f6534b3e5ed8d62eba4ba64f4762c00f040522",
+    "codex-package-x86_64-unknown-linux-musl.tar.gz": "582646c6bf0561eb0de540f7fc85b9121b0091a826bc6e96830b7f1722122182"
+  }
+}
