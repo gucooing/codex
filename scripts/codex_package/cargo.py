@@ -79,9 +79,11 @@ def build_source_binaries(
 
     output_dir = cargo_profile_output_dir(spec, profile)
     outputs = SourceBuildOutputs(
+        # Cargo names the output after the bin target; the package layout
+        # copies it to the variant's entrypoint name.
         entrypoint_bin=resolve_output_path(
             entrypoint_bin,
-            output_dir / variant.entrypoint_name(spec),
+            output_dir / f"{variant.cargo_bin}{spec.exe_suffix}",
         ),
         code_mode_host_bin=(
             code_mode_host_bin.resolve()
